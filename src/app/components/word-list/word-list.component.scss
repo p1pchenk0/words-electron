@@ -1,0 +1,51 @@
+// .container {
+//     max-width: 1200px;
+//     margin: auto;
+//     margin-top: 24px;
+// }
+th,
+td {
+    padding: 15px;
+}
+
+word-button:not(:last-child) {
+    margin-right: 15px;
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+}
+
+table {
+    border-collapse: collapse;
+    width: 90%;
+    margin: auto;
+    max-width: 900px;
+    h5 {
+        font-size: 25px;
+        font-weight: 100;
+    }
+}
+
+tr {
+    &:not(:last-child),
+    th {
+        border-bottom: 1px solid #EDAE49;
+    }
+    th {
+        font-weight: 100;
+        &:first-child {
+            text-align: left;
+        }
+    }
+}
+
+.no-words {
+    font-size: 18px;
+}
+
+.bg {
+    background-image: url('../../../assets/words-list-bg.jpg');
+}

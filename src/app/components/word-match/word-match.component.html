@@ -1,0 +1,17 @@
+<div class="container" #gridContainer>
+  <div class="grid">
+    <div class="grid-sizer"></div>
+    <div class="grid-item" *ngFor="let card of cards" [@disappear]="'in'" (@disappear.done)="renderMasonry()" (click)="compareCards(card, $event)">
+      <div class="brick pointer" [ngClass]='{ "selected": card.selected }'>
+        {{ card.word }}
+      </div>
+    </div>
+  </div>
+  <div class="text-center game-over-container" *ngIf="gameIsOver">
+    <div class="game-over-inner text-center">
+      Похоже, не осталось неотгаданных слов
+    </div>
+    <word-button buttonText="Сыграть ещё раз" (click)='startNewGame()'></word-button>
+  </div>
+</div>
+<div class="bg"></div>

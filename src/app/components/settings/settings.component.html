@@ -1,0 +1,41 @@
+<div class="container">
+  <form [formGroup]='settingsForm' (ngSubmit)="onFormSubmit($event)" #form="ngForm">
+    <!-- Сколько слов набирать из базы слов для игры -->
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <mat-form-field>
+              <input type="number" min="1" [formControl]="settingsForm.controls['wordsCount']" id="wordsCount" name="wordsCount" matInput
+                placeholder="Количество слов для игры">
+            </mat-form-field>
+          </td>
+          <td>
+            <img class="hint pointer" src="assets/hint.png" [matTooltip]="wordsCountHint">
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <mat-form-field>
+              <input type="number" min="2" [formControl]="settingsForm.controls['wordsPerPage']" id="wordsPerPage" name="wordsPerPage"
+                matInput placeholder="Количество слов на страницу в Списке слов">
+            </mat-form-field>
+          </td>
+          <td>
+            <img class="hint pointer" src="assets/hint.png" [matTooltip]="perPageHint">
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <mat-checkbox [formControl]="settingsForm.controls['hardMode']" id="hardMode" name="hardMode">Усложненный режим "Выбери вариант"</mat-checkbox>
+          </td>
+          <td>
+            <img class="hint pointer" src="assets/hint.png" [matTooltip]="hardModeHint">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <button mat-raised-button [disabled]="!settingsForm.valid" type="submit">Сохранить настройки</button>
+  </form>
+</div>
+<div class="bg"></div>

@@ -1,0 +1,9 @@
+<div class="modal-wrapper" *ngIf="isShown">
+  <div class="modal-body" [@modalBodyState]="modalState">
+    <ng-content></ng-content>
+    <br>
+    <word-button *ngIf="dismissText" [buttonText]="dismissText" (click)='onButtonClick(false)'></word-button>
+    <word-button *ngIf="acceptText" [buttonText]="acceptText" color="red" class="push-right" (click)='onButtonClick(true)'></word-button>
+  </div>
+  <div class="modal-bg" [@modalBgState]="bgState"></div>
+</div>

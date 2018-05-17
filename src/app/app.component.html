@@ -1,0 +1,14 @@
+<div class="preloader-container" *ngIf="showPreloader">
+  <div class="preloader">
+    <div class="thecube">
+      <div class="cube c1"></div>
+      <div class="cube c2"></div>
+      <div class="cube c4"></div>
+      <div class="cube c3"></div>
+    </div>
+  </div>
+</div>
+<top-nav></top-nav>
+<main [@routerTransition]="getState(o)">
+  <router-outlet #o="outlet"></router-outlet>
+</main>

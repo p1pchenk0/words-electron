@@ -1,0 +1,113 @@
+/* You can add global styles to this file, and also import other style files */
+
+$button-front-color: #0A81D1;
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@font-face {
+    font-family: 'Montserrat';
+    src: url('assets/Montserrat-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('assets/Montserrat-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+button.mat-raised-button {
+    background-color: $button-front-color !important;
+    color: #fff !important;
+    &:disabled {
+        background-color: desaturate($button-front-color, 50%) !important;
+        opacity: .5;
+        box-shadow: none;
+    }
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin-top: 24px;
+}
+
+router-outlet+* {
+    padding: 15px;
+    display: block;
+}
+
+.push-right {
+    float: right;
+}
+
+* {
+    font-family: 'Montserrat', "Helvetica Neue", sans-serif !important;
+}
+
+table {
+    font-family: 'Montserrat', "Helvetica Neue", sans-serif;
+}
+
+.error {
+    background: red !important;
+}
+
+.success {
+    background: green !important;
+}
+
+.mat-simple-snackbar {
+    z-index: 5000000;
+}
+
+.bg {
+    background-size: cover;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    right: 0;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.no-events {
+    pointer-events: none;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.mat-tooltip {
+    background: rgba(36, 123, 160, .8) !important;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, .25);
+}
+
+.ngx-pagination {
+    a {
+        &:hover {
+            background: transparent !important;
+        }
+    }
+    .current {
+        background: #247ba0 !important;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, .25);
+    }
+}
+
+.mat-checkbox-checked.mat-accent .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+    background-color: #247ba0 !important;
+}

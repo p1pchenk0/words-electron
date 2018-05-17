@@ -1,0 +1,19 @@
+form {
+    display: block;
+}
+
+.mat-form-field,
+.mat-select {
+    margin-right: 2%;
+    width: 48%;
+}
+
+:host.ng-animating {
+    .bg {
+        top: -64px;
+    }
+}
+
+.bg {
+    background-image: url('../../../assets/add-word-bg.jpg');
+}

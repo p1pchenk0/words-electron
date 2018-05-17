@@ -1,0 +1,35 @@
+<div *ngIf="displayWarning">
+  <div class="warning text-center">
+    <br>
+    <br>
+    <br> Для игры в этом режиме нужно иметь набор как минимум из 4 слов
+    <br>
+    <span routerLink="/add-word" class="pointer bold">Добавьте</span> больше слов или проверьте
+    <span routerLink="/settings" class="pointer bold">настройки</span> (опция "Количество слов для игры")
+  </div>
+</div>
+
+<div *ngIf="!displayWarning">
+  <div class="container" *ngIf="!isGameOver" [@overTransition]="isGameOver">
+    <h4 class="text-center" [@slideDown]="random">
+      <div *ngFor="let word of [mainWord]">
+        {{word}}
+      </div>
+    </h4>
+    <div class="variants">
+      <div class="variant text-center pointer" (click)="checkSelectedVariant(variant.value, $event)" *ngFor="let variant of variants">
+        {{variant.display}}
+      </div>
+    </div>
+  </div>
+
+  <div class="container text-center" *ngIf="isGameOver" [@overTransition]="isGameOver">
+    <h4>
+      Угадано слов: {{rightCounter}}
+      <br> Промахов: {{wrongCounter}}
+    </h4>
+    <word-button buttonText="Начать сначала" (click)="newGame()"></word-button>
+  </div>
+</div>
+
+<div class="bg"></div>

@@ -1,0 +1,76 @@
+$orange: #EDAE49;
+$red: #E94F37;
+@mixin transition($transition) {
+    -moz-transition: $transition;
+    -o-transition: $transition;
+    -webkit-transition: $transition;
+    transition: $transition;
+}
+
+:host.ng-animating {
+    .game-over-container {
+        top: -64px;
+    }
+}
+
+.bg {
+    background-image: url('../../../assets/blur-bg.jpg');
+}
+
+.grid {
+    max-width: 900px;
+    width: 100%;
+    margin: auto;
+}
+
+.grid-item,
+.grid-sizer {
+    width: 32%;
+    text-align: center;
+}
+
+.brick {
+    padding: 24px;
+    background-color: lighten($orange, 5%);
+    margin-bottom: 15px;
+    position: relative;
+    top: 0;
+    left: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
+    @include transition(all .3s ease-out);
+    &.selected {
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.25);
+        background-color: $orange;
+        @include transition(all .3s ease-in);
+        top: -6px;
+        left: -6px;
+    }
+    &.right {
+        background-color: green;
+        color: white;
+    }
+    &.wrong {
+        background: $red;
+        color: white;
+    }
+}
+
+.game-over {
+    &-container {
+        width: 500px;
+        height: 200px;
+        margin: auto;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: lighten($orange, 5%);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
+        box-sizing: border-box;
+        padding: 50px;
+    }
+    &-inner {
+        margin-bottom: 20px;
+    }
+}
