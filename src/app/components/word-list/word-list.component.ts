@@ -6,24 +6,28 @@ import {
 } from '@angular/core';
 
 import { AppComponent } from '../../app.component';
-import { listAnimation } from '../../common/animations';
+import { listAnimation, searchBarAnimation } from '../../common/animations';
 import {
   DELETE_WORD, DELETE_WORD_RESULT, GET_WORD_LIST, GET_WORDS_COUNT, SENT_WORDS_COUNT, WORD_LIST
 } from '../../common/events';
 import { Word } from '../../models/word.model';
 import { ElectronService } from '../../services/electron.service';
 import { ModalComponent } from '../modal/modal.component';
+import { FormControl } from '@angular/forms';
+import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 
 @Component({
   selector: 'word-list',
   templateUrl: './word-list.component.html',
   styleUrls: ['./word-list.component.scss'],
-  animations: [listAnimation]
+  animations: [listAnimation, searchBarAnimation]
 })
 
 export class WordListComponent implements OnInit, OnDestroy {
+  searchWords = '';
+  searchWordsControl = new FormControl();
+  searchBarState = 'out';
   pageNum: number = 1;
-  random = Math.random();
   wordsCount: number;
   wordsPerPage: number;
   @ViewChild('deleteModal') deleteModal: ModalComponent;
@@ -45,12 +49,16 @@ export class WordListComponent implements OnInit, OnDestroy {
     @Inject(AppComponent) private appComponent: AppComponent
   ) { }
 
+  toggleSearchBar() {
+    this.searchBarState = this.searchBarState === 'out' ? 'in' : 'out';
+  }
+
   ngOnInit() {
     this.electronService.electronEvents$.pipe(
       takeWhile(() => this.isAlive),
       filter(o => o.event === WORD_LIST),
       pluck('body')
-    ).subscribe((event) => {
+    ).subscribe((event: any) => {
       this.onGetWordsHandler(event);
     });
 
@@ -72,12 +80,17 @@ export class WordListComponent implements OnInit, OnDestroy {
 
     this.preloaderService.showPreloader();
     this.electronService.ipcRenderer.send(GET_WORDS_COUNT);
+
+    this.searchWordsControl.valueChanges.pipe(debounceTime(300)).subscribe((request) => {
+      this.pageNum = 1;
+      this.searchWords = request;
+      this.electronService.ipcRenderer.send(GET_WORD_LIST, this.pageNum, request);
+    });
   }
 
   changePage(pageNumber) {
-    this.random = Math.random();
     this.pageNum = pageNumber;
-    this.electronService.ipcRenderer.send(GET_WORD_LIST, this.pageNum);
+    this.electronService.ipcRenderer.send(GET_WORD_LIST, this.pageNum, this.searchWords);
   }
 
   onDeleteWordHandler(result) {
@@ -103,9 +116,10 @@ export class WordListComponent implements OnInit, OnDestroy {
     });
   }
 
-  onGetWordsHandler(words) {
+  onGetWordsHandler({ words, count }) {
     this.zone.run(() => {
       this.words = words;
+      this.wordsCount = count;
       this.isLoaded = true;
       this.preloaderService.hidePreloader();
     });

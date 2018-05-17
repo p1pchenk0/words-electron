@@ -49,3 +49,32 @@ tr {
 .bg {
     background-image: url('../../../assets/words-list-bg.jpg');
 }
+
+.search {
+    position: fixed;
+    padding-left: 15px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.5);
+    .mat-form-field {
+        width: calc(100% - 81px);
+    }
+    & + span {
+        display: inline-block;
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        height: 66px;
+        width: 66px;
+        background: #247ba0;
+        img {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+        }
+    }
+}

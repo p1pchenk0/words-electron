@@ -1,8 +1,13 @@
 <div class="container">
-  <div class="text-center no-words bold" *ngIf="!words.length && isLoaded">
+  <div class="text-center no-words bold" *ngIf="!words.length && !searchWords && isLoaded">
     Начните добавлять слова, перейдя
     <a routerLink='/add-word'>сюда</a>
   </div>
+
+  <div class="text-center no-words bold" *ngIf="!words.length && searchWords && isLoaded">
+    Нет слов, соответствующих введённому запросу
+  </div>
+
   <table class="highlight bordered" *ngIf="words.length && isLoaded">
     <thead class="blue-text text-darken-1">
       <tr>
@@ -37,7 +42,18 @@
       </tr>
     </tbody>
   </table>
-  <pagination-controls (pageChange)="changePage($event)" previousLabel="Сюда" nextLabel="Туда" autoHide="true"></pagination-controls>
+
+  <pagination-controls (pageChange)="changePage($event)" previousLabel="Сюда" nextLabel="Туда" autoHide="true" *ngIf="words.length"></pagination-controls>
+
+  <div class="search" [@searchBar]="searchBarState">
+    <mat-form-field>
+      <input id="search" name="search" matInput placeholder="Поиск слова" [value]="searchWords" [formControl]="searchWordsControl">
+    </mat-form-field>
+  </div>
+  <span class="pointer" (click)="toggleSearchBar()">
+    <img *ngIf="searchBarState === 'out'" src="assets/search.png">
+    <img *ngIf="searchBarState === 'in'" src="assets/close.png">
+  </span>
 </div>
 
 <modal #deleteModal acceptText="Удалить" dismissText="Отмена" (modalResult)="onDeleteModalResult($event)">

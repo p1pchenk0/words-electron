@@ -78,3 +78,11 @@ export const slideDownAnimation = trigger('slideDown', [
     ], )
   ])
 ]);
+
+export const searchBarAnimation = trigger('searchBar', [
+  state('out', style({ opacity: 0, width: 0, transform: 'translateY(100%), translateX(100%)' })),
+  state('in', style({ opacity: 1, width: '*', transform: 'translateY(0%), translateX(0%)' })),
+  transition('out <=> in', [
+    animate('.33s ease')
+  ])
+]);

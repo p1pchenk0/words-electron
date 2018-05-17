@@ -117,10 +117,15 @@ ipcMain.on(SEND_NEW_WORD, (event, newWord) => {
 });
 
 // Handler for getting words
-ipcMain.on(GET_WORD_LIST, (event, page) => {
+ipcMain.on(GET_WORD_LIST, (event, page, search) => {
   if (page) { // page is sent only from all words list tab
-    db.words.find({}).skip(wordsPerPage * (page - 1)).limit(wordsPerPage).exec((err, words) => {
-      mainWindow.webContents.send(WORD_LIST, words);
+    let dbRequest = search ? db.words.find({ english: { $regex: new RegExp(search.toLowerCase()) } }) : db.words.find({});
+    let countRequest = search ? { english: { $regex: new RegExp(search.toLowerCase()) } } : {};
+
+    db.words.count(countRequest, (err, count) => {
+      dbRequest.skip(wordsPerPage * (page - 1)).limit(wordsPerPage).exec((err, words) => {
+        mainWindow.webContents.send(WORD_LIST, { words, count });
+      });
     });
   } else { // ask words for a game
     db.words.count({}, (err, count) => {
@@ -147,17 +152,17 @@ ipcMain.on(SEND_GAME_RESULTS, (event, results) => {
     db.words.update({
       english: result.english
     }, {
-      $set: {
-        rightCount: result.rightCount,
-        wrongCount: result.wrongCount
-      }
-    }, {}, (err, res) => {
-      if (copiedResults.length) {
-        updateResults();
-      } else {
-        mainWindow.webContents.send(GAME_RESULTS_SAVED);
-      }
-    });
+        $set: {
+          rightCount: result.rightCount,
+          wrongCount: result.wrongCount
+        }
+      }, {}, (err, res) => {
+        if (copiedResults.length) {
+          updateResults();
+        } else {
+          mainWindow.webContents.send(GAME_RESULTS_SAVED);
+        }
+      });
   })()
 });
 
@@ -166,29 +171,30 @@ ipcMain.on(ASK_SETTINGS, (event, settings) => {
   db.settings.findOne({
     id: "settings"
   }, {
-    _id: 0
-  }, (err, found) => {
-    mainWindow.webContents.send(SEND_SETTINGS, found);
-  });
+      _id: 0
+    }, (err, found) => {
+      mainWindow.webContents.send(SEND_SETTINGS, found);
+    });
 });
 
 // Handler for saving settings
 ipcMain.on(SAVE_SETTINGS, (events, settings) => {
   db.settings.update({
     id: "settings"
-  }, { ...settings,
-    id: "settings"
   }, {
-    returnUpdatedDocs: true
-  }, (err, res, saved) => {
-    wordsCount = saved.wordsCount;
-    wordsPerPage = saved.wordsPerPage;
+      ...settings,
+      id: "settings"
+    }, {
+      returnUpdatedDocs: true
+    }, (err, res, saved) => {
+      wordsCount = saved.wordsCount;
+      wordsPerPage = saved.wordsPerPage;
 
-    mainWindow.webContents.send(SAVE_SETTINGS_RESULT, {
-      success: true,
-      message: 'Настройки сохранены'
+      mainWindow.webContents.send(SAVE_SETTINGS_RESULT, {
+        success: true,
+        message: 'Настройки сохранены'
+      });
     });
-  });
 });
 
 // Handler for updating word
@@ -208,21 +214,21 @@ ipcMain.on(UPDATE_WORD, (event, updatedWord) => {
       db.words.update({
         _id: updatedWord._id
       }, updatedWord, {
-        returnUpdatedDocs: true
-      }, (err, num, updated) => {
-        if (err) {
-          mainWindow.webContents.send(UPDATE_WORD_RESULT, {
-            success: false,
-            message: 'Слово не было обновлено'
-          });
-        } else {
-          mainWindow.webContents.send(UPDATE_WORD_RESULT, {
-            success: true,
-            message: 'Слово было обновлено',
-            word: updated
-          });
-        }
-      });
+          returnUpdatedDocs: true
+        }, (err, num, updated) => {
+          if (err) {
+            mainWindow.webContents.send(UPDATE_WORD_RESULT, {
+              success: false,
+              message: 'Слово не было обновлено'
+            });
+          } else {
+            mainWindow.webContents.send(UPDATE_WORD_RESULT, {
+              success: true,
+              message: 'Слово было обновлено',
+              word: updated
+            });
+          }
+        });
     }
   });
 });
@@ -255,7 +261,6 @@ ipcMain.on(GET_WORDS_COUNT, () => {
     });
   });
 });
-
 
 function getSomeRandomDocuments(amount, cb) {
   let result = [];
