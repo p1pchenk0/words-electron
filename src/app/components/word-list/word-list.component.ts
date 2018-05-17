@@ -34,7 +34,6 @@ export class WordListComponent implements OnInit, OnDestroy {
   deleteModalIsOpen: boolean = false;
   editModalIsOpen: boolean = false;
   currentEditWord: Word;
-  deleteStatus: string;
   isLoaded: boolean = false;
   isAlive: boolean = true;
 

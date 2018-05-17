@@ -3,6 +3,11 @@
     <!-- Сколько слов набирать из базы слов для игры -->
     <table>
       <tbody>
+        <thead>
+          <th>
+            Общие настройки
+          </th>
+        </thead>
         <tr>
           <td>
             <mat-form-field>
@@ -25,9 +30,14 @@
             <img class="hint pointer" src="assets/hint.png" [matTooltip]="perPageHint">
           </td>
         </tr>
+        <thead>
+          <th>
+            Режим "Выбери вариант"
+          </th>
+        </thead>
         <tr>
           <td>
-            <mat-checkbox [formControl]="settingsForm.controls['hardMode']" id="hardMode" name="hardMode">Усложненный режим "Выбери вариант"</mat-checkbox>
+            <mat-checkbox [formControl]="settingsForm.controls['hardMode']" id="hardMode" name="hardMode">Усложненный режим</mat-checkbox>
           </td>
           <td>
             <img class="hint pointer" src="assets/hint.png" [matTooltip]="hardModeHint">

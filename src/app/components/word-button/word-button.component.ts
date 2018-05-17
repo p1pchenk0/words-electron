@@ -9,4 +9,5 @@ import { Component, Input, OnInit } from '@angular/core';
 export class WordButtonComponent {
     @Input() buttonText: string;
     @Input() color: string;
+    @Input() iconUrl: string;
 }
