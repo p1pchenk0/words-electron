@@ -11,7 +11,8 @@
       <tr>
         <th>Слово</th>
         <th>Переводы</th>
-        <th>Статистика</th>
+        <th>Угадано</th>
+        <th>Ошибок</th>
         <th>Действия</th>
       </tr>
     </thead>
@@ -27,8 +28,10 @@
           </span>
         </td>
         <td>
-          Угадано раз: {{ word.rightCount }}
-          <br> Ошибок: {{ word.wrongCount }}
+          {{ word.rightCount }}
+        </td>
+        <td>
+          {{ word.wrongCount }}
         </td>
         <td class="actions text-center">
           <word-button buttonText="Изменить" color='aqua' (click)='openEditModal(word)'></word-button>
