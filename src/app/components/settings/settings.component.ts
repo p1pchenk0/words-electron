@@ -9,7 +9,9 @@ import { AppComponent } from '../../app.component';
 import {
   ASK_SETTINGS, SAVE_SETTINGS, SAVE_SETTINGS_RESULT, SEND_SETTINGS
 } from '../../common/events';
-import { SETTINGS_GAMESET_COUNT, SETTINGS_WORDS_PER_PAGE, SETTINGS_HARD_MODE } from '../../common/hints';
+import {
+  SETTINGS_GAMESET_COUNT, SETTINGS_HARD_MODE, SETTINGS_WORDS_PER_PAGE
+} from '../../common/hints';
 import { ElectronService } from '../../services/electron.service';
 
 @Component({
