@@ -7,9 +7,8 @@ import { PreloaderService } from 'src/app/services/preloader.service';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-  MatButtonModule, MatInputModule, MatSelectModule, MatSnackBarModule, MatToolbarModule,
-  MatTooltipModule,
-  MatCheckboxModule
+  MatButtonModule, MatInputModule, MatSelectModule, MatSnackBarModule,
+  MatToolbarModule, MatTooltipModule, MatCheckboxModule
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
