@@ -32,34 +32,20 @@ export class AddWordComponent implements OnInit, OnDestroy, OnChanges {
         private electronService: ElectronService,
         @Inject(AppComponent) private appComponent: AppComponent,
         private zone: NgZone) {
-        this.wordForm = this.wordToEdit ? formBuilder.group({
-            english_word: [this.wordToEdit.english || '', Validators.required],
-            russian_word_1: [this.wordToEdit.russian[0], Validators.required],
-            russian_word_2: this.wordToEdit.russian[1] || '',
-            russian_word_3: this.wordToEdit.russian[2] || '',
-            russian_word_4: this.wordToEdit.russian[3] || ''
-        }) : formBuilder.group({
-            english_word: ['', Validators.required],
-            russian_word_1: ['', Validators.required],
-            russian_word_2: '',
-            russian_word_3: '',
-            russian_word_4: ''
-        });
+        this.prepareForm();
     }
 
     ngOnChanges() {
-        this.wordForm = this.wordToEdit ? this.formBuilder.group({
-            english_word: [this.wordToEdit.english || '', Validators.required],
-            russian_word_1: [this.wordToEdit.russian[0], Validators.required],
-            russian_word_2: this.wordToEdit.russian[1] || '',
-            russian_word_3: this.wordToEdit.russian[2] || '',
-            russian_word_4: this.wordToEdit.russian[3] || ''
-        }) : this.formBuilder.group({
-            english_word: ['', Validators.required],
-            russian_word_1: ['', Validators.required],
-            russian_word_2: '',
-            russian_word_3: '',
-            russian_word_4: ''
+        this.prepareForm();
+    }
+
+    prepareForm() {
+        this.wordForm = this.formBuilder.group({
+            english_word: [this.wordToEdit && this.wordToEdit.english || '', Validators.compose([Validators.required, Validators.pattern(/^[^\d][a-zA-Z- ]+[^\d]$/)])],
+            russian_word_1: [this.wordToEdit && this.wordToEdit.russian[0], Validators.compose([Validators.required, Validators.pattern(/^[^\d][а-яА-Я- ]+[^\d]$/)])],
+            russian_word_2: [this.wordToEdit && this.wordToEdit.russian[1] || '', Validators.pattern(/^[^\d][а-яА-Я- ]+[^\d]$/)],
+            russian_word_3: [this.wordToEdit && this.wordToEdit.russian[2] || '', Validators.pattern(/^[^\d][а-яА-Я- ]+[^\d]$/)],
+            russian_word_4: [this.wordToEdit && this.wordToEdit.russian[3] || '', Validators.pattern(/^[^\d][а-яА-Я- ]+[^\d]$/)]
         });
     }
 
@@ -95,19 +81,19 @@ export class AddWordComponent implements OnInit, OnDestroy, OnChanges {
     onAddWordSubmit(event: Event) {
         event.preventDefault();
         let newWord: Word = {
-            english: this.wordForm.controls['english_word'].value.toLowerCase(),
-            russian: [this.wordForm.controls['russian_word_1'].value.toLowerCase()],
+            english: this.wordForm.controls['english_word'].value.toLowerCase().trim(),
+            russian: [this.wordForm.controls['russian_word_1'].value.toLowerCase().trim()],
             rightCount: 0,
             wrongCount: 0
         };
         if (this.wordForm.controls['russian_word_2'].value) {
-            newWord.russian.push(this.wordForm.controls['russian_word_2'].value.toLowerCase())
+            newWord.russian.push(this.wordForm.controls['russian_word_2'].value.toLowerCase().trim())
         }
         if (this.wordForm.controls['russian_word_3'].value) {
-            newWord.russian.push(this.wordForm.controls['russian_word_3'].value.toLowerCase())
+            newWord.russian.push(this.wordForm.controls['russian_word_3'].value.toLowerCase().trim())
         }
         if (this.wordForm.controls['russian_word_4'].value) {
-            newWord.russian.push(this.wordForm.controls['russian_word_4'].value.toLowerCase())
+            newWord.russian.push(this.wordForm.controls['russian_word_4'].value.toLowerCase().trim())
         }
         if (this.wordToEdit) {
             newWord.rightCount = this.wordToEdit.rightCount;
