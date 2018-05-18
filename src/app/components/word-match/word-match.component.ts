@@ -27,6 +27,7 @@ export class WordMatchComponent implements OnInit, OnDestroy {
     @ViewChild('gridContainer') gridContainer: ElementRef;
     grid: any;
     msnry: any;
+    displayWarning = false;
     cards: any[] = [];
     cardsWithResult: Word[]; // слова для отправки на сервер с новой статистикой по каждому слову
     referenceSuit: any[]; // массив слов для проверки правильного выбора англ слова и его перевода
@@ -46,7 +47,6 @@ export class WordMatchComponent implements OnInit, OnDestroy {
 
     renderMasonry() {
         this.cd.detectChanges();
-        // setTimeout(() => {
         this.grid = document.querySelector('.grid');
 
         if (!this.msnry) {
@@ -59,7 +59,6 @@ export class WordMatchComponent implements OnInit, OnDestroy {
         } else {
             this.msnry.layout();
         }
-        // }, 0);
         this.cd.detectChanges();
     }
 
@@ -84,36 +83,41 @@ export class WordMatchComponent implements OnInit, OnDestroy {
     }
 
     onGetWordsHandler(words) {
-        this.cardsWithResult = words;
-        let translations = [];
-        let english = [];
+        if (words.length) {
+            this.cardsWithResult = words;
+            let translations = [];
+            let english = [];
 
-        for (let word of words) {
-            let chosenTranslation = word.russian[Math.floor(Math.random() * word.russian.length)];
-            let translation = {
-                word: chosenTranslation,
-                translation: word.english,
-                isEnglish: false,
-                selected: false
-            };
+            for (let word of words) {
+                let chosenTranslation = word.russian[Math.floor(Math.random() * word.russian.length)];
+                let translation = {
+                    word: chosenTranslation,
+                    translation: word.english,
+                    isEnglish: false,
+                    selected: false
+                };
 
-            translations.push(translation);
-            english.push({
-                word: word.english,
-                translation: chosenTranslation,
-                id: word._id,
-                isEnglish: true,
-                selected: false,
-                wrongCount: word.wrongCount,
-                rightCount: word.rightCount
+                translations.push(translation);
+                english.push({
+                    word: word.english,
+                    translation: chosenTranslation,
+                    id: word._id,
+                    isEnglish: true,
+                    selected: false,
+                    wrongCount: word.wrongCount,
+                    rightCount: word.rightCount
+                });
+            }
+
+            this.cards = shuffle(translations.concat(english));
+            this.zone.run(() => {
+                this.renderMasonry();
+                this.preloaderService.hidePreloader();
             });
-        }
-
-        this.cards = shuffle(translations.concat(english));
-        this.zone.run(() => {
-            this.renderMasonry();
+        } else {
             this.preloaderService.hidePreloader();
-        });
+            this.displayWarning = true;
+        }
     }
 
     saveResultsHandler() {

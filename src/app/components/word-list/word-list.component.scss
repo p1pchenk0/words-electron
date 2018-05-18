@@ -43,7 +43,11 @@ tr {
 }
 
 .no-words {
-    font-size: 18px;
+    font-size: 22px;
+    line-height: 1.5;
+    span {
+        color: #247ba0;
+    }
 }
 
 .bg {
@@ -60,7 +64,7 @@ tr {
     .mat-form-field {
         width: calc(100% - 81px);
     }
-    & + span {
+    &+span {
         display: inline-block;
         position: fixed;
         right: 0;

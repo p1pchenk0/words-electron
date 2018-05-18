@@ -1,4 +1,14 @@
-<div class="container" #gridContainer>
+<div *ngIf="displayWarning" [@appear]="'out'">
+  <div class="warning text-center">
+    <br>
+    <br>
+    <br> Для игры в этом режиме нужно иметь набор как минимум из 2 слов
+    <br>
+    <span routerLink="/add-word" class="pointer bold">Добавьте</span> больше слов или проверьте
+    <span routerLink="/settings" class="pointer bold">настройки</span> (опция "Количество слов для игры")
+  </div>
+</div>
+<div *ngIf="!displayWarning" class="container" #gridContainer>
   <div class="grid">
     <div class="grid-sizer"></div>
     <div class="grid-item" *ngFor="let card of cards" [@disappear]="'in'" (@disappear.done)="renderMasonry()" (click)="compareCards(card, $event)">

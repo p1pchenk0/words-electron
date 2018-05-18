@@ -1,7 +1,10 @@
 <div class="container">
   <div class="text-center no-words bold" *ngIf="!words.length && !searchWords && isLoaded">
-    Начните добавлять слова, перейдя
-    <a routerLink='/add-word'>сюда</a>
+    <br>
+    <br>
+    <br>
+    <br> Начните добавлять слова, перейдя
+    <span routerLink="/add-word" class="pointer bold">сюда</span>
   </div>
 
   <div class="text-center no-words bold" *ngIf="!words.length && searchWords && isLoaded">
