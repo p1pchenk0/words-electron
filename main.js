@@ -38,6 +38,12 @@ let defaultSettings = {
 };
 const db = {};
 
+// this should be placed at top of main.js to handle setup events quickly
+if (handleSquirrelEvent(app)) {
+  // squirrel event handled and app will exit in 1000ms, so don't do anything else
+  return;
+}
+
 db.words = new Datastore({
   filename: './words.db'
 });
@@ -119,12 +125,23 @@ ipcMain.on(SEND_NEW_WORD, (event, newWord) => {
 // Handler for getting words
 ipcMain.on(GET_WORD_LIST, (event, page, search) => {
   if (page) { // page is sent only from all words list tab
-    let dbRequest = search ? db.words.find({ english: { $regex: new RegExp(search.toLowerCase()) } }) : db.words.find({});
-    let countRequest = search ? { english: { $regex: new RegExp(search.toLowerCase()) } } : {};
+    let dbRequest = search ? db.words.find({
+      english: {
+        $regex: new RegExp(search.toLowerCase())
+      }
+    }) : db.words.find({});
+    let countRequest = search ? {
+      english: {
+        $regex: new RegExp(search.toLowerCase())
+      }
+    } : {};
 
     db.words.count(countRequest, (err, count) => {
       dbRequest.skip(wordsPerPage * (page - 1)).limit(wordsPerPage).exec((err, words) => {
-        mainWindow.webContents.send(WORD_LIST, { words, count });
+        mainWindow.webContents.send(WORD_LIST, {
+          words,
+          count
+        });
       });
     });
   } else { // ask words for a game
@@ -152,17 +169,17 @@ ipcMain.on(SEND_GAME_RESULTS, (event, results) => {
     db.words.update({
       english: result.english
     }, {
-        $set: {
-          rightCount: result.rightCount,
-          wrongCount: result.wrongCount
-        }
-      }, {}, (err, res) => {
-        if (copiedResults.length) {
-          updateResults();
-        } else {
-          mainWindow.webContents.send(GAME_RESULTS_SAVED);
-        }
-      });
+      $set: {
+        rightCount: result.rightCount,
+        wrongCount: result.wrongCount
+      }
+    }, {}, (err, res) => {
+      if (copiedResults.length) {
+        updateResults();
+      } else {
+        mainWindow.webContents.send(GAME_RESULTS_SAVED);
+      }
+    });
   })()
 });
 
@@ -171,10 +188,10 @@ ipcMain.on(ASK_SETTINGS, (event, settings) => {
   db.settings.findOne({
     id: "settings"
   }, {
-      _id: 0
-    }, (err, found) => {
-      mainWindow.webContents.send(SEND_SETTINGS, found);
-    });
+    _id: 0
+  }, (err, found) => {
+    mainWindow.webContents.send(SEND_SETTINGS, found);
+  });
 });
 
 // Handler for saving settings
@@ -182,19 +199,19 @@ ipcMain.on(SAVE_SETTINGS, (events, settings) => {
   db.settings.update({
     id: "settings"
   }, {
-      ...settings,
-      id: "settings"
-    }, {
-      returnUpdatedDocs: true
-    }, (err, res, saved) => {
-      wordsCount = saved.wordsCount;
-      wordsPerPage = saved.wordsPerPage;
+    ...settings,
+    id: "settings"
+  }, {
+    returnUpdatedDocs: true
+  }, (err, res, saved) => {
+    wordsCount = saved.wordsCount;
+    wordsPerPage = saved.wordsPerPage;
 
-      mainWindow.webContents.send(SAVE_SETTINGS_RESULT, {
-        success: true,
-        message: 'Настройки сохранены'
-      });
+    mainWindow.webContents.send(SAVE_SETTINGS_RESULT, {
+      success: true,
+      message: 'Настройки сохранены'
     });
+  });
 });
 
 // Handler for updating word
@@ -214,21 +231,21 @@ ipcMain.on(UPDATE_WORD, (event, updatedWord) => {
       db.words.update({
         _id: updatedWord._id
       }, updatedWord, {
-          returnUpdatedDocs: true
-        }, (err, num, updated) => {
-          if (err) {
-            mainWindow.webContents.send(UPDATE_WORD_RESULT, {
-              success: false,
-              message: 'Слово не было обновлено'
-            });
-          } else {
-            mainWindow.webContents.send(UPDATE_WORD_RESULT, {
-              success: true,
-              message: 'Слово было обновлено',
-              word: updated
-            });
-          }
-        });
+        returnUpdatedDocs: true
+      }, (err, num, updated) => {
+        if (err) {
+          mainWindow.webContents.send(UPDATE_WORD_RESULT, {
+            success: false,
+            message: 'Слово не было обновлено'
+          });
+        } else {
+          mainWindow.webContents.send(UPDATE_WORD_RESULT, {
+            success: true,
+            message: 'Слово было обновлено',
+            word: updated
+          });
+        }
+      });
     }
   });
 });
@@ -304,3 +321,67 @@ function getRandomString(length) {
 
   return string;
 }
+
+function handleSquirrelEvent(application) {
+  if (process.argv.length === 1) {
+    return false;
+  }
+
+  const ChildProcess = require('child_process');
+  const path = require('path');
+
+  const appFolder = path.resolve(process.execPath, '..');
+  const rootAtomFolder = path.resolve(appFolder, '..');
+  const updateDotExe = path.resolve(path.join(rootAtomFolder, 'Update.exe'));
+  const exeName = path.basename(process.execPath);
+
+  const spawn = function (command, args) {
+    let spawnedProcess, error;
+
+    try {
+      spawnedProcess = ChildProcess.spawn(command, args, {
+        detached: true
+      });
+    } catch (error) {}
+
+    return spawnedProcess;
+  };
+
+  const spawnUpdate = function (args) {
+    return spawn(updateDotExe, args);
+  };
+
+  const squirrelEvent = process.argv[1];
+  switch (squirrelEvent) {
+    case '--squirrel-install':
+    case '--squirrel-updated':
+      // Optionally do things such as:
+      // - Add your .exe to the PATH
+      // - Write to the registry for things like file associations and
+      //   explorer context menus
+
+      // Install desktop and start menu shortcuts
+      spawnUpdate(['--createShortcut', exeName]);
+
+      setTimeout(application.quit, 1000);
+      return true;
+
+    case '--squirrel-uninstall':
+      // Undo anything you did in the --squirrel-install and
+      // --squirrel-updated handlers
+
+      // Remove desktop and start menu shortcuts
+      spawnUpdate(['--removeShortcut', exeName]);
+
+      setTimeout(application.quit, 1000);
+      return true;
+
+    case '--squirrel-obsolete':
+      // This is called on the outgoing version of your app before
+      // we update to the new version - it's the opposite of
+      // --squirrel-updated
+
+      application.quit();
+      return true;
+  }
+};
