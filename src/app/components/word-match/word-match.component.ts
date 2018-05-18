@@ -64,7 +64,7 @@ export class WordMatchComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.electronService.ipcRenderer.send(GET_WORD_LIST);
+        this.electronService.send(GET_WORD_LIST);
         this.preloaderService.showPreloader();
 
         this.electronService.electronEvents$.pipe(
@@ -151,7 +151,7 @@ export class WordMatchComponent implements OnInit, OnDestroy {
                         this.cards.splice(indexOfSecondCardToDelete, 1);
                         this.pairOfCardsToCompare = [];
                         if (!this.cards.length) {
-                            this.electronService.ipcRenderer.send(SEND_GAME_RESULTS, this.cardsWithResult);
+                            this.electronService.send(SEND_GAME_RESULTS, this.cardsWithResult);
                             this.gameIsOver = true;
                         }
                     }, 1000);
@@ -176,7 +176,7 @@ export class WordMatchComponent implements OnInit, OnDestroy {
     startNewGame() {
         this.gameIsOver = false;
         this.msnry = null;
-        this.electronService.ipcRenderer.send(GET_WORD_LIST);
+        this.electronService.send(GET_WORD_LIST);
     }
 
     resetSelection(cardOne, cardTwo) {

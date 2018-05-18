@@ -114,6 +114,6 @@ export class AddWordComponent implements OnInit, OnDestroy, OnChanges {
             newWord.wrongCount = this.wordToEdit.wrongCount;
             newWord._id = this.wordToEdit._id;
         }
-        this.electronService.ipcRenderer.send(this.wordToEdit ? UPDATE_WORD : SEND_NEW_WORD, newWord);
+        this.electronService.send(this.wordToEdit ? UPDATE_WORD : SEND_NEW_WORD, newWord);
     }
 }

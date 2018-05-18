@@ -63,7 +63,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
         });
 
         this.preloaderService.showPreloader();
-        this.electronService.ipcRenderer.send(GET_WORD_LIST);
+        this.electronService.send(GET_WORD_LIST);
     }
 
     onGetWordsHandler(words) {
@@ -163,14 +163,14 @@ export class WordSelectComponent implements OnInit, OnDestroy {
     endGame() {
         this.mainWord = '';
         this.variants = [];
-        this.electronService.ipcRenderer.send(SEND_GAME_RESULTS, this.words);
+        this.electronService.send(SEND_GAME_RESULTS, this.words);
         this.isGameOver = true;
     }
 
     newGame() {
         this.isGameOver = false;
         this.currentIndex = this.wrongCounter = this.rightCounter = 0;
-        this.electronService.ipcRenderer.send(GET_WORD_LIST);
+        this.electronService.send(GET_WORD_LIST);
     }
 
     ngOnDestroy() {

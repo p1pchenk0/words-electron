@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.electronService.ipcRenderer.send(ASK_SETTINGS);
+    this.electronService.send(ASK_SETTINGS);
     this.preloaderService.getPreloaderState().subscribe((state) => {
       this.showPreloader = state;
       this.changeDetector.detectChanges();

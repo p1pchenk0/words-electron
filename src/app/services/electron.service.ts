@@ -10,7 +10,7 @@ import {
 
 @Injectable()
 export class ElectronService {
-    ipcRenderer: typeof ipcRenderer;
+    private ipcRenderer: typeof ipcRenderer;
     private electronSubject: Subject<any> = new Subject<any>();
     public electronEvents$ = this.electronSubject.asObservable();
 
@@ -44,5 +44,9 @@ export class ElectronService {
                 });
             });
         });
+    }
+
+    send(event, body?, extra?) {
+        this.ipcRenderer.send(event, body, extra);
     }
 }

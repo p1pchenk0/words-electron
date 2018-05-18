@@ -79,18 +79,18 @@ export class WordListComponent implements OnInit, OnDestroy {
     });
 
     this.preloaderService.showPreloader();
-    this.electronService.ipcRenderer.send(GET_WORDS_COUNT);
+    this.electronService.send(GET_WORDS_COUNT);
 
     this.searchWordsControl.valueChanges.pipe(debounceTime(300)).subscribe((request) => {
       this.pageNum = 1;
       this.searchWords = request;
-      this.electronService.ipcRenderer.send(GET_WORD_LIST, this.pageNum, request);
+      this.electronService.send(GET_WORD_LIST, this.pageNum, request);
     });
   }
 
   changePage(pageNumber) {
     this.pageNum = pageNumber;
-    this.electronService.ipcRenderer.send(GET_WORD_LIST, this.pageNum, this.searchWords);
+    this.electronService.send(GET_WORD_LIST, this.pageNum, this.searchWords);
   }
 
   onDeleteWordHandler(result) {
@@ -101,7 +101,7 @@ export class WordListComponent implements OnInit, OnDestroy {
         if (this.pageNum > 1 && !this.words.length) { // if no words left on current page, go to previous one
           this.changePage(this.pageNum - 1);
         }
-        this.electronService.ipcRenderer.send(GET_WORDS_COUNT);
+        this.electronService.send(GET_WORDS_COUNT);
         this.closeDeleteModal();
       }
       this.appComponent.showSnackBar(result.message, result.success);
@@ -112,7 +112,7 @@ export class WordListComponent implements OnInit, OnDestroy {
     this.zone.run(() => {
       this.wordsCount = count;
       this.wordsPerPage = wordsPerPage;
-      this.electronService.ipcRenderer.send(GET_WORD_LIST, this.pageNum);
+      this.electronService.send(GET_WORD_LIST, this.pageNum);
     });
   }
 
@@ -144,7 +144,7 @@ export class WordListComponent implements OnInit, OnDestroy {
   }
 
   deleteWord(word) {
-    this.electronService.ipcRenderer.send(DELETE_WORD, word);
+    this.electronService.send(DELETE_WORD, word);
   }
 
   openDeleteModal(word: Word) {
