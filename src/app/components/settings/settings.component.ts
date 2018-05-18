@@ -41,7 +41,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.electronService.ipcRenderer.send(ASK_SETTINGS);
+    this.electronService.send(ASK_SETTINGS);
 
     this.electronService.electronEvents$.pipe(
       takeWhile(() => this.isAlive),
@@ -71,7 +71,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   saveResultsHandler(result) {
     this.zone.run(() => {
       this.appComponent.showSnackBar(result.message, result.success);
-      this.electronService.ipcRenderer.send(ASK_SETTINGS);
+      this.electronService.send(ASK_SETTINGS);
     });
   }
 
@@ -82,6 +82,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   onFormSubmit(event: Event) {
     event.preventDefault();
 
-    this.electronService.ipcRenderer.send(SAVE_SETTINGS, this.settingsForm.value);
+    this.electronService.send(SAVE_SETTINGS, this.settingsForm.value);
   }
 }
