@@ -50,7 +50,7 @@
 
   <div class="search" [@searchBar]="searchBarState">
     <mat-form-field>
-      <input id="search" name="search" matInput placeholder="Поиск слова" [value]="searchWords" [formControl]="searchWordsControl">
+      <input id="search" #searchInput name="search" matInput placeholder="Поиск слова" [value]="searchWords" [formControl]="searchWordsControl">
     </mat-form-field>
   </div>
   <span class="pointer" (click)="toggleSearchBar()">

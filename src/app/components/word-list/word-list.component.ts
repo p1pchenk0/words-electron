@@ -35,6 +35,7 @@ export class WordListComponent implements OnInit, OnDestroy {
   @ViewChildren('sort') sortColumns: ElementRef[];
   @ViewChild('deleteModal') deleteModal: ModalComponent;
   @ViewChild('editModal') editModal: ModalComponent;
+  @ViewChild('searchInput') searchInput: ElementRef;
   words: Word[] = [];
   deleteCandidateWord: Word;
   wordToDelete: string = '';
@@ -55,6 +56,7 @@ export class WordListComponent implements OnInit, OnDestroy {
 
   toggleSearchBar() {
     this.searchBarState = this.searchBarState === 'out' ? 'in' : 'out';
+    this.searchBarState === 'in' && this.searchInput && this.renderer.selectRootElement(this.searchInput.nativeElement).focus();
   }
 
   sortBy(event, prop) {
