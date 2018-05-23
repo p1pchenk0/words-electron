@@ -5,7 +5,7 @@ import {
 import { shuffle } from 'src/app/common/functions';
 import { ElectronService } from 'src/app/services/electron.service';
 
-import { Component, Inject, NgZone, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { Component, Inject, NgZone, OnDestroy, OnInit, Renderer2, ViewChildren, ElementRef } from '@angular/core';
 
 import { AppComponent } from '../../app.component';
 import { listAnimation, overTransition, slideDownAnimation } from '../../common/animations';
@@ -21,6 +21,7 @@ import { Settings } from '../../common/settings';
 })
 
 export class WordSelectComponent implements OnInit, OnDestroy {
+    @ViewChildren('variantHtml') htmlVariants: ElementRef[];
     mainWord: string;
     random = Math.random();
     currentIndex: number = 0;
@@ -147,6 +148,10 @@ export class WordSelectComponent implements OnInit, OnDestroy {
                 this.wrongCounter++;
                 this.currentWord.wrongCount++;
                 this.currentIndex++;
+                let rightIndex = this.variants.findIndex(el => el.value === this.currentWord.english || this.currentWord.russian.includes(el.value));
+                this.htmlVariants.map((el, index) => {
+                    index === rightIndex && this.renderer.addClass(el.nativeElement, 'right');
+                });
                 this.renderer.addClass(selectedElement, 'wrong');
                 setTimeout(() => {
                     this.renderer.removeClass(selectedElement, 'wrong');
@@ -155,7 +160,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
                     } else {
                         this.endGame()
                     }
-                }, this.nextRoundTimeout);
+                }, this.nextRoundTimeout * 3);
             }
         }
     }

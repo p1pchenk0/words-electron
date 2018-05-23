@@ -17,7 +17,7 @@
       </div>
     </h4>
     <div class="variants">
-      <div class="variant text-center pointer" (click)="checkSelectedVariant(variant.value, $event)" *ngFor="let variant of variants">
+      <div class="variant text-center pointer" #variantHtml (click)="checkSelectedVariant(variant.value, $event)" *ngFor="let variant of variants">
         {{variant.display}}
       </div>
     </div>
