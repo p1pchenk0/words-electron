@@ -4,7 +4,7 @@ import { ElectronService } from 'src/app/services/electron.service';
 
 import {
     ChangeDetectorRef, Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnChanges,
-    OnDestroy, OnInit, Output, Renderer2, ViewChild
+    OnDestroy, OnInit, Output, Renderer2, ViewChild, AfterContentInit
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
@@ -19,7 +19,7 @@ import { Word } from '../../models/word.model';
     styleUrls: ['./add-word.component.scss']
 })
 
-export class AddWordComponent implements OnInit, OnDestroy, OnChanges {
+export class AddWordComponent implements OnInit, OnDestroy, OnChanges, AfterContentInit {
     wordForm: FormGroup;
     @Input() wordToEdit: Word;
     @Output() wordUpdateResult = new EventEmitter<any>();
@@ -57,6 +57,10 @@ export class AddWordComponent implements OnInit, OnDestroy, OnChanges {
         ).subscribe((result) => {
             this.newWordHander(result);
         });
+    }
+
+    ngAfterContentInit() {
+        this.renderer.selectRootElement(this.englishInput.nativeElement).focus();        
     }
 
     ngOnDestroy() {
