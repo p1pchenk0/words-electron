@@ -14,10 +14,10 @@
   <table class="highlight bordered" *ngIf="words.length && isLoaded">
     <thead class="blue-text text-darken-1">
       <tr>
-        <th>Слово</th>
+        <th #sort (click)="sortBy($event, 'english')">Слово</th>
         <th>Переводы</th>
-        <th>Угадано</th>
-        <th>Ошибок</th>
+        <th #sort (click)="sortBy($event, 'rightCount')">Угадано</th>
+        <th #sort (click)="sortBy($event, 'wrongCount')">Ошибок</th>
         <th>Действия</th>
       </tr>
     </thead>

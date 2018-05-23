@@ -8,6 +8,32 @@ td {
     padding: 15px;
 }
 
+th {
+    &.active {
+        font-weight: bold;
+        position: relative;
+        &:after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-style: solid;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            margin-left: 10px;
+        }
+        &[order="desc"]:after {
+            border-color: #000000 transparent transparent transparent;
+            border-width: 6.9px 4px 0 4px;
+        }
+        &[order="asc"]:after {
+            border-color: transparent transparent #000000 transparent;
+            border-width: 0 4px 6.9px 4px;
+        }
+    }
+}
+
 word-button:not(:last-child) {
     margin-right: 15px;
 }

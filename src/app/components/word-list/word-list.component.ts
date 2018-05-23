@@ -2,7 +2,7 @@ import { filter, pluck, takeWhile } from 'rxjs/operators';
 import { PreloaderService } from 'src/app/services/preloader.service';
 
 import {
-  ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild
+  ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild, ViewChildren, ElementRef, Renderer2
 } from '@angular/core';
 
 import { AppComponent } from '../../app.component';
@@ -30,6 +30,9 @@ export class WordListComponent implements OnInit, OnDestroy {
   pageNum: number = 1;
   wordsCount: number;
   wordsPerPage: number;
+  sortOrder: string;
+  sortProperty: string;
+  @ViewChildren('sort') sortColumns: ElementRef[];
   @ViewChild('deleteModal') deleteModal: ModalComponent;
   @ViewChild('editModal') editModal: ModalComponent;
   words: Word[] = [];
@@ -45,12 +48,25 @@ export class WordListComponent implements OnInit, OnDestroy {
     private electronService: ElectronService,
     private preloaderService: PreloaderService,
     private changeDetector: ChangeDetectorRef,
+    private renderer: Renderer2,
     private zone: NgZone,
     @Inject(AppComponent) private appComponent: AppComponent
   ) { }
 
   toggleSearchBar() {
     this.searchBarState = this.searchBarState === 'out' ? 'in' : 'out';
+  }
+
+  sortBy(event, prop) {
+    this.sortColumns.map((column) => {
+      this.renderer.removeClass(column.nativeElement, 'active');
+    });
+    this.renderer.addClass(event.target, 'active');
+    let sortOrder = event.target.getAttribute('order') === 'asc' ? 'desc' : 'asc';
+    this.renderer.setAttribute(event.target, 'order', sortOrder);
+    this.sortProperty = prop;
+    this.sortOrder = sortOrder;
+    this.changePage(1);
   }
 
   ngOnInit() {
@@ -84,13 +100,17 @@ export class WordListComponent implements OnInit, OnDestroy {
     this.searchWordsControl.valueChanges.pipe(debounceTime(300)).subscribe((request) => {
       this.pageNum = 1;
       this.searchWords = request;
-      this.electronService.send(GET_WORD_LIST, this.pageNum, request);
+      this.electronService.send(GET_WORD_LIST, { page: this.pageNum }, request);
     });
   }
 
   changePage(pageNumber) {
     this.pageNum = pageNumber;
-    this.electronService.send(GET_WORD_LIST, this.pageNum, this.searchWords);
+    this.electronService.send(GET_WORD_LIST, {
+      page: this.pageNum,
+      order: this.sortOrder,
+      sortBy: this.sortProperty
+    }, this.searchWords);
   }
 
   onDeleteWordHandler(result) {
@@ -112,7 +132,7 @@ export class WordListComponent implements OnInit, OnDestroy {
     this.zone.run(() => {
       this.wordsCount = count;
       this.wordsPerPage = wordsPerPage;
-      this.electronService.send(GET_WORD_LIST, this.pageNum);
+      this.electronService.send(GET_WORD_LIST, { page: this.pageNum });
     });
   }
 
