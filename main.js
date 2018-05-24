@@ -123,8 +123,8 @@ ipcMain.on(SEND_NEW_WORD, (event, newWord) => {
 });
 
 // Handler for getting words
-ipcMain.on(GET_WORD_LIST, (event, { page, order, sortBy }, search) => {
-  if (page) { // page is sent only from all words list tab
+ipcMain.on(GET_WORD_LIST, (event, options, search) => {
+  if (options && options.page) { // page is sent only from all words list tab
     let dbRequest = search ? db.words.find({
       english: {
         $regex: new RegExp(search.toLowerCase())
@@ -136,12 +136,12 @@ ipcMain.on(GET_WORD_LIST, (event, { page, order, sortBy }, search) => {
       }
     } : {};
 
-    if (order && sortBy) {
-      dbRequest = dbRequest.sort({ [sortBy]: order === 'asc' ? 1 : -1 });
+    if (options.order && options.sortBy) {
+      dbRequest = dbRequest.sort({ [options.sortBy]: options.order === 'asc' ? 1 : -1 });
     }
 
     db.words.count(countRequest, (err, count) => {
-      dbRequest.skip(wordsPerPage * (page - 1)).limit(wordsPerPage).exec((err, words) => {
+      dbRequest.skip(wordsPerPage * (options.page - 1)).limit(wordsPerPage).exec((err, words) => {
         mainWindow.webContents.send(WORD_LIST, {
           words,
           count
