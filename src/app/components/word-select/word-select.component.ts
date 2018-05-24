@@ -22,6 +22,7 @@ import { Settings } from '../../common/settings';
 
 export class WordSelectComponent implements OnInit, OnDestroy {
     @ViewChildren('variantHtml') htmlVariants: ElementRef[];
+    @ViewChildren('progressElement') progressElement: ElementRef[];
     mainWord: string;
     random = Math.random();
     currentIndex: number = 0;
@@ -132,10 +133,14 @@ export class WordSelectComponent implements OnInit, OnDestroy {
         let selectedElement = element.target;
         if (this.currentIndex !== this.words.length) {
             if (this.currentWord.russian.includes(variant) || this.currentWord.english === variant) {
+                this.progressElement.map((el, index) => {
+                    index === this.currentIndex && this.renderer.addClass(el.nativeElement, 'right');
+                });
                 this.rightCounter++;
                 this.currentWord.rightCount++;
                 this.currentIndex++;
                 this.renderer.addClass(selectedElement, 'right');
+                let rightIndex = this.variants.findIndex(el => el.value === this.currentWord.english || this.currentWord.russian.includes(el.value));
                 setTimeout(() => {
                     this.renderer.removeClass(selectedElement, 'right');
                     if (this.currentIndex !== this.words.length) {
@@ -145,6 +150,9 @@ export class WordSelectComponent implements OnInit, OnDestroy {
                     }
                 }, this.nextRoundTimeout);
             } else {
+                this.progressElement.map((el, index) => {
+                    index === this.currentIndex && this.renderer.addClass(el.nativeElement, 'wrong');
+                });
                 this.wrongCounter++;
                 this.currentWord.wrongCount++;
                 this.currentIndex++;

@@ -61,3 +61,24 @@ h4 {
     max-width: 800px;
     margin: auto;
 }
+
+.progress {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    right: 0;
+    height: 10px;
+    span {
+        display: inline-block;
+        height: 100%;
+        &.right {
+            @include transition(all .2s ease-in);
+            background: green;
+        }
+        &.wrong {
+            @include transition(all .2s ease-in);
+            background: $red;
+        }
+    }
+}
