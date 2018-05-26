@@ -30,6 +30,14 @@
             <img class="hint pointer" src="assets/hint.png" [matTooltip]="perPageHint">
           </td>
         </tr>
+        <tr>
+          <td>
+            <mat-checkbox [formControl]="settingsForm.controls['wrongCountPriority']" id="wrongCountPriority" name="wrongCountPriority">Приоритет сложных слов</mat-checkbox>
+          </td>
+          <td>
+            <img class="hint pointer" src="assets/hint.png" [matTooltip]="wrongCountPriorityHint">
+          </td>
+        </tr>
         <thead>
           <th>
             Режим "Выбери вариант"

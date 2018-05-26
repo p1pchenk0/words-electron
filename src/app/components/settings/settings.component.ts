@@ -10,7 +10,7 @@ import {
   ASK_SETTINGS, SAVE_SETTINGS, SAVE_SETTINGS_RESULT, SEND_SETTINGS
 } from '../../common/events';
 import {
-  SETTINGS_GAMESET_COUNT, SETTINGS_HARD_MODE, SETTINGS_WORDS_PER_PAGE
+  SETTINGS_GAMESET_COUNT, SETTINGS_HARD_MODE, SETTINGS_WORDS_PER_PAGE, SETTINGS_WRONG_COUNT_PRIORITY
 } from '../../common/hints';
 import { ElectronService } from '../../services/electron.service';
 
@@ -25,6 +25,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   wordsCountHint = SETTINGS_GAMESET_COUNT;
   perPageHint = SETTINGS_WORDS_PER_PAGE;
   hardModeHint = SETTINGS_HARD_MODE;
+  wrongCountPriorityHint = SETTINGS_WRONG_COUNT_PRIORITY;
   settingsForm: FormGroup;
   isAlive: boolean = true;
 
@@ -36,6 +37,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.settingsForm = formBuilder.group({
       wordsCount: ['', Validators.compose([Validators.required, Validators.min(1)])],
       wordsPerPage: ['', Validators.compose([Validators.required, Validators.min(2)])],
+      wrongCountPriority: false,
       hardMode: false
     });
   }
@@ -65,6 +67,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.settingsForm.controls['wordsCount'].setValue(settings.wordsCount);
       this.settingsForm.controls['wordsPerPage'].setValue(settings.wordsPerPage);
       this.settingsForm.controls['hardMode'].setValue(settings.hardMode);
+      this.settingsForm.controls['wrongCountPriority'].setValue(settings.wrongCountPriority);
     });
   }
 

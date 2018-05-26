@@ -28,13 +28,14 @@ const {
 const Random = require('random-js');
 const RNDM = new Random(Random.engines.mt19937().autoSeed());
 let mainWindow;
-let wordsCount, wordsPerPage; // will be taken from settings
+let wordsCount, wordsPerPage, wrongCountPriority; // will be taken from settings
 let defaultSettings = {
   id: "settings",
   wordsCount: 50,
   variantsCount: 4,
   wordsPerPage: 2,
-  hardMode: false
+  hardMode: false,
+  wrongCountPriority: false
 };
 const db = {};
 
@@ -73,11 +74,13 @@ function createMainWindow() {
           db.settings.insert(defaultSettings, (err, added) => {
             wordsCount = added.wordsCount;
             wordsPerPage = added.wordsPerPage;
+            wrongCountPriority = added.wrongCountPriority;
             loadWindow();
           });
         } else {
           wordsCount = found.wordsCount;
           wordsPerPage = found.wordsPerPage;
+          wrongCountPriority = found.wrongCountPriority;
           loadWindow();
         }
 
@@ -149,19 +152,25 @@ ipcMain.on(GET_WORD_LIST, (event, options, search) => {
       });
     });
   } else { // ask words for a game
-    db.words.count({}, (err, count) => {
-      if (count <= wordsCount) {
-        // total words are less then words per game, so no reason to get random documents
-        db.words.find({}).limit(wordsCount).exec((err, words) => {
-          mainWindow.webContents.send(WORD_LIST, words);
-        });
-      } else {
-        // "words per game" number is smaller than total amount of words, so get random documents
-        getSomeRandomDocuments(wordsCount, (words) => {
-          mainWindow.webContents.send(WORD_LIST, words);
-        });
-      }
-    });
+    if (wrongCountPriority) { // set mode for getting most wrongly used words
+      db.words.find({}).limit(wordsCount).sort({ wrongCount: -1 }).exec((err, words) => {
+        mainWindow.webContents.send(WORD_LIST, words);
+      });
+    } else {
+      db.words.count({}, (err, count) => {
+        if (count <= wordsCount) {
+          // total words are less then words per game, so no reason to get random documents
+          db.words.find({}).limit(wordsCount).exec((err, words) => {
+            mainWindow.webContents.send(WORD_LIST, words);
+          });
+        } else {
+          // "words per game" number is smaller than total amount of words, so get random documents
+          getSomeRandomDocuments(wordsCount, (words) => {
+            mainWindow.webContents.send(WORD_LIST, words);
+          });
+        }
+      });
+    }
   }
 });
 
@@ -210,6 +219,7 @@ ipcMain.on(SAVE_SETTINGS, (events, settings) => {
     }, (err, res, saved) => {
       wordsCount = saved.wordsCount;
       wordsPerPage = saved.wordsPerPage;
+      wrongCountPriority = saved.wrongCountPriority;
 
       mainWindow.webContents.send(SAVE_SETTINGS_RESULT, {
         success: true,
