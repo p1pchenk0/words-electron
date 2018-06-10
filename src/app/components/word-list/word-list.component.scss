@@ -1,11 +1,12 @@
-// .container {
-//     max-width: 1200px;
-//     margin: auto;
-//     margin-top: 24px;
-// }
+table {
+    overflow: hidden;
+}
 th,
 td {
     padding: 15px;
+    &.actions {
+        min-width: 170px;
+    }
 }
 
 th {

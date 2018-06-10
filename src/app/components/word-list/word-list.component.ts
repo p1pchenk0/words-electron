@@ -57,6 +57,7 @@ export class WordListComponent implements OnInit, OnDestroy {
   toggleSearchBar() {
     this.searchBarState = this.searchBarState === 'out' ? 'in' : 'out';
     this.searchBarState === 'in' && this.searchInput && this.renderer.selectRootElement(this.searchInput.nativeElement).focus();
+    if (this.searchBarState === 'out') this.searchWordsControl.setValue('');
   }
 
   sortBy(event, prop) {

@@ -48,6 +48,8 @@
 
   <pagination-controls (pageChange)="changePage($event)" previousLabel="Сюда" nextLabel="Туда" autoHide="true" *ngIf="words.length"></pagination-controls>
 
+  <div style="height: 50px" *ngIf="searchBarState === 'in'"></div>
+
   <div class="search" [@searchBar]="searchBarState">
     <mat-form-field>
       <input id="search" #searchInput name="search" matInput placeholder="Поиск слова" [value]="searchWords" [formControl]="searchWordsControl">
