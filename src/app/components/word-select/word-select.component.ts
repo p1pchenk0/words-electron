@@ -141,6 +141,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
                 this.currentIndex++;
                 this.renderer.addClass(selectedElement, 'right');
                 let rightIndex = this.variants.findIndex(el => el.value === this.currentWord.english || this.currentWord.russian.includes(el.value));
+                this.variants[rightIndex].display = this.variants[rightIndex].value;                
                 setTimeout(() => {
                     this.renderer.removeClass(selectedElement, 'right');
                     if (this.currentIndex !== this.words.length) {
@@ -159,6 +160,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
                 let rightIndex = this.variants.findIndex(el => el.value === this.currentWord.english || this.currentWord.russian.includes(el.value));
                 this.htmlVariants.map((el, index) => {
                     index === rightIndex && this.renderer.addClass(el.nativeElement, 'right');
+                    this.variants[rightIndex].display = this.variants[rightIndex].value;
                 });
                 this.renderer.addClass(selectedElement, 'wrong');
                 setTimeout(() => {
