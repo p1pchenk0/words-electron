@@ -39,6 +39,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
     nextRoundTimeout: number = 500;
     isAlive: boolean = true;
     displayWarning = false;
+    players: any[] = [];
 
     constructor(
         private preloaderService: PreloaderService,
@@ -53,7 +54,16 @@ export class WordSelectComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.isTournamentMode = !!this.route.snapshot.queryParams.tournament;
-        console.log(this.isTournamentMode);
+
+        if (this.isTournamentMode) {
+            this.players = [
+                { color: 'blue', isActive: false, score: 0 },
+                { color: 'crimson', isActive: false, score: 0 }
+            ];
+
+            this.activateRandomPlayer();
+        }
+
         this.electronService.electronEvents$.pipe(
             takeWhile(() => this.isAlive),
             filter(o => o.event === WORD_LIST),
@@ -71,6 +81,22 @@ export class WordSelectComponent implements OnInit, OnDestroy {
 
         this.preloaderService.showPreloader();
         this.electronService.send(GET_WORD_LIST);
+    }
+
+    getActivePlayer() {
+        let activePlayerIndex = this.players.findIndex(player => player.isActive);
+        return this.players[activePlayerIndex];
+    }
+
+    getNextPlayer() {
+        let inactivePlayerIndex = this.players.findIndex(player => !player.isActive);
+        let activePlayerIndex = this.players.findIndex(player => player.isActive);
+        this.players[inactivePlayerIndex].isActive = true;
+        this.players[activePlayerIndex].isActive = false;
+    }
+
+    activateRandomPlayer() {
+        shuffle(this.players)[0].isActive = true;
     }
 
     onGetWordsHandler(words) {
@@ -145,6 +171,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
                 this.currentWord.rightCount++;
                 this.currentIndex++;
                 this.renderer.addClass(selectedElement, 'right');
+                this.isTournamentMode && this.getActivePlayer().score++;
                 let rightIndex = this.variants.findIndex(el => el.value === this.currentWord.english || this.currentWord.russian.includes(el.value));
                 this.variants[rightIndex].display = this.variants[rightIndex].value;
                 setTimeout(() => {
@@ -159,6 +186,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
                 this.progressElement.map((el, index) => {
                     index === this.currentIndex && this.renderer.addClass(el.nativeElement, 'wrong');
                 });
+                this.isTournamentMode && this.getNextPlayer();
                 this.wrongCounter++;
                 this.currentWord.wrongCount++;
                 this.currentIndex++;
@@ -191,6 +219,10 @@ export class WordSelectComponent implements OnInit, OnDestroy {
         this.isGameOver = false;
         this.currentIndex = this.wrongCounter = this.rightCounter = 0;
         this.electronService.send(GET_WORD_LIST);
+        if (this.isTournamentMode) {
+            this.players.forEach(player => player.score = 0);
+            this.activateRandomPlayer();
+        }
     }
 
     ngOnDestroy() {

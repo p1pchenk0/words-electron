@@ -57,6 +57,75 @@ h4 {
     }
 }
 
+.players-scores {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    width: 110px;
+    height: 110px;
+    span {
+        transition: all 1s ease-in-out;
+        position: absolute;
+        bottom: 0;
+        width: 45%;
+        &:last-child {
+            right: 0;
+        }
+        small {
+            position: absolute;
+            left: 0;
+            right: 0;
+            text-align: center;
+            line-height: 1;
+            top: -15px;
+            font-weight: bold;
+        }
+    }
+}
+
+.active-player-indicator {
+    animation: pulse 2s infinite;
+    span {
+        position: fixed;
+    }
+    .top,
+    .bottom {
+        left: 0;
+        right: 0;
+        height: 7px;
+    }
+    .top {
+        top: 0;
+    }
+    .bottom {
+        bottom: 0;
+    }
+    .left,
+    .right {
+        top: 0;
+        bottom: 0;
+        width: 7px;
+    }
+    .left {
+        left: 0;
+    }
+    .right {
+        right: 0;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
 .variants {
     max-width: 800px;
     margin: auto;
