@@ -28,6 +28,7 @@ const appRoutes: Routes = [
   { path: 'add-word', component: AddWordComponent, data: { state: 'add-word' } },
   { path: 'word-list', component: WordListComponent, data: { state: 'word-list' } },
   { path: 'select-word', component: WordSelectComponent, data: { state: 'word-select' } },
+  { path: 'select-word-tournament', component: WordSelectComponent, data: { state: 'word-select-tournament' } },
   { path: 'match-words', component: WordMatchComponent, data: { state: 'match-words' } },
   { path: 'settings', component: SettingsComponent, data: { state: 'settings' } },
   // { path: 'statistics', component: WordStatisticsComponent }

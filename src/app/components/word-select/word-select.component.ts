@@ -12,6 +12,7 @@ import { listAnimation, overTransition, slideDownAnimation } from '../../common/
 import { Word } from '../../models/word.model';
 import { PreloaderService } from '../../services/preloader.service';
 import { Settings } from '../../common/settings';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'word-select',
@@ -34,6 +35,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
     wordsForServer: Word[] = [];
     variants: any[] = [];
     isGameOver: boolean = false;
+    isTournamentMode: boolean = false;
     nextRoundTimeout: number = 500;
     isAlive: boolean = true;
     displayWarning = false;
@@ -42,6 +44,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
         private preloaderService: PreloaderService,
         private renderer: Renderer2,
         private zone: NgZone,
+        private route: ActivatedRoute,
         @Inject(AppComponent) private appComponent: AppComponent,
         private electronService: ElectronService,
         private settings: Settings
@@ -49,6 +52,8 @@ export class WordSelectComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.isTournamentMode = !!this.route.snapshot.queryParams.tournament;
+        console.log(this.isTournamentMode);
         this.electronService.electronEvents$.pipe(
             takeWhile(() => this.isAlive),
             filter(o => o.event === WORD_LIST),
@@ -141,7 +146,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
                 this.currentIndex++;
                 this.renderer.addClass(selectedElement, 'right');
                 let rightIndex = this.variants.findIndex(el => el.value === this.currentWord.english || this.currentWord.russian.includes(el.value));
-                this.variants[rightIndex].display = this.variants[rightIndex].value;                
+                this.variants[rightIndex].display = this.variants[rightIndex].value;
                 setTimeout(() => {
                     this.renderer.removeClass(selectedElement, 'right');
                     if (this.currentIndex !== this.words.length) {

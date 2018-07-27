@@ -5,6 +5,10 @@
   <span matTooltipShowDelay="2000" [matTooltip]="selectTooltip" routerLink='/select-word' routerLinkActive='active'>
     <img src="assets/select.png"> Выбор варианта
   </span>
+  <span matTooltipShowDelay="2000" [matTooltip]="selectTournamentTooltip" routerLink='/select-word-tournament' [queryParams]="{ tournament: true }"
+    routerLinkActive='active'>
+    <img src="assets/select.png"> Соревнование
+  </span>
   <span matTooltipShowDelay="2000" [matTooltip]="addTooltip" routerLink='/add-word' routerLinkActive='active'>
     <img src="assets/add.png"> Новое слово
   </span>
