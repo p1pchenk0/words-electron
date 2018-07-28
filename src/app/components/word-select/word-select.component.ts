@@ -99,6 +99,10 @@ export class WordSelectComponent implements OnInit, OnDestroy {
         shuffle(this.players)[0].isActive = true;
     }
 
+    getTextShadowColor() {
+        return this.isTournamentMode ? { 'text-shadow': '0px 1px 0px ' + this.getActivePlayer().color } : {};
+    }
+
     onGetWordsHandler(words) {
         this.zone.run(() => {
             this.preloaderService.hidePreloader();
@@ -136,7 +140,6 @@ export class WordSelectComponent implements OnInit, OnDestroy {
                     let randomVariant = variant.russian[Math.floor(Math.random() * variant.russian.length)];
                     otherVariants.push({ value: randomVariant, display: randomVariant });
                 }
-                // (currentRound === 'russian') ? otherVariants.push(variant.english) : otherVariants.push(variant.russian[Math.floor(Math.random() * variant.russian.length)])
             }
             this.variants = this.variants.concat(otherVariants);
             this.variants = shuffle(this.variants);
@@ -192,14 +195,14 @@ export class WordSelectComponent implements OnInit, OnDestroy {
                 this.currentIndex++;
                 let rightIndex = this.variants.findIndex(el => el.value === this.currentWord.english || this.currentWord.russian.includes(el.value));
                 this.htmlVariants.map((el, index) => {
-                    index === rightIndex && this.renderer.addClass(el.nativeElement, 'right');
-                    this.variants[rightIndex].display = this.variants[rightIndex].value;
+                    index === rightIndex && !this.isTournamentMode && this.renderer.addClass(el.nativeElement, 'right');
+                    if (!this.isTournamentMode) this.variants[rightIndex].display = this.variants[rightIndex].value;
                 });
                 this.renderer.addClass(selectedElement, 'wrong');
                 setTimeout(() => {
                     this.renderer.removeClass(selectedElement, 'wrong');
                     if (this.currentIndex !== this.words.length) {
-                        this.prepareRound()
+                        !this.isTournamentMode && this.prepareRound()
                     } else {
                         this.endGame()
                     }

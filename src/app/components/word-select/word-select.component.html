@@ -12,7 +12,7 @@
 <div *ngIf="!displayWarning">
   <div class="container" *ngIf="!isGameOver" [@overTransition]="isGameOver">
     <h4 class="text-center" [@slideDown]="random">
-      <div *ngFor="let word of [mainWord]">
+      <div *ngFor="let word of [mainWord]" [ngStyle]="getTextShadowColor()">
         {{word}}
       </div>
     </h4>
