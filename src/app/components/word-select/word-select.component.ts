@@ -192,7 +192,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
                 this.isTournamentMode && this.getNextPlayer();
                 this.wrongCounter++;
                 this.currentWord.wrongCount++;
-                this.currentIndex++;
+                !this.isTournamentMode && this.currentIndex++;
                 let rightIndex = this.variants.findIndex(el => el.value === this.currentWord.english || this.currentWord.russian.includes(el.value));
                 this.htmlVariants.map((el, index) => {
                     index === rightIndex && !this.isTournamentMode && this.renderer.addClass(el.nativeElement, 'right');
