@@ -21,16 +21,31 @@
         {{variant.display}}
       </div>
     </div>
-    <div class="progres" *ngIf="!isTournamentMode">
+    <div class="progress" *ngIf="!isTournamentMode">
       <span *ngFor="let word of words" #progressElement [ngStyle]="{ 'width': (1 / words.length) | percent: '.1-10' }"></span>
     </div>
   </div>
 
   <div class="container text-center" *ngIf="isGameOver">
-    <h4 *ngIf="!isTournamentMode">
-      Угадано слов: {{rightCounter}}
-      <br> Промахов: {{wrongCounter}}
-    </h4>
+    <ng-container *ngIf="!isTournamentMode">
+      <h4>
+        Угадано слов: {{rightCounter}}
+        <br> Промахов: {{wrongCounter}}
+      </h4>
+      <div *ngIf="wrongWords.length" class="text-center">
+        <br>
+        <br>
+        <h6>Стоит обратить внимание:</h6>
+        <table>
+          <tr *ngFor="let word of wrongWords">
+            <td>{{ word.english }}</td>
+            <td>&nbsp;&mdash;&nbsp;</td>
+            <td>{{ word.russian[0] }}</td>
+          </tr>
+        </table>
+      </div>
+    </ng-container>
+
     <h4 *ngIf="isTournamentMode">
       <span [ngStyle]="{ 'color': players[0].color }">{{ players[0].score }}</span> против
       <span [ngStyle]="{ 'color': players[1].color }">{{ players[1].score }}</span>

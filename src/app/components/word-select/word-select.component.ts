@@ -189,6 +189,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
                 this.progressElement.map((el, index) => {
                     index === this.currentIndex && this.renderer.addClass(el.nativeElement, 'wrong');
                 });
+                !this.isTournamentMode && this.wrongWords.push(this.currentWord);
                 this.isTournamentMode && this.getNextPlayer();
                 this.wrongCounter++;
                 this.currentWord.wrongCount++;
@@ -220,6 +221,7 @@ export class WordSelectComponent implements OnInit, OnDestroy {
 
     newGame() {
         this.isGameOver = false;
+        this.wrongWords = [];
         this.currentIndex = this.wrongCounter = this.rightCounter = 0;
         this.electronService.send(GET_WORD_LIST);
         if (this.isTournamentMode) {
