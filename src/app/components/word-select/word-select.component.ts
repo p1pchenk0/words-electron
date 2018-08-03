@@ -5,7 +5,7 @@ import {
 import { shuffle } from 'src/app/common/functions';
 import { ElectronService } from 'src/app/services/electron.service';
 
-import { Component, Inject, NgZone, OnDestroy, OnInit, Renderer2, ViewChildren, ElementRef } from '@angular/core';
+import { Component, Inject, NgZone, OnDestroy, OnInit, Renderer2, ViewChildren, ElementRef, ViewChild } from '@angular/core';
 
 import { AppComponent } from '../../app.component';
 import { listAnimation, overTransition, slideDownAnimation } from '../../common/animations';
@@ -13,6 +13,7 @@ import { Word } from '../../models/word.model';
 import { PreloaderService } from '../../services/preloader.service';
 import { Settings } from '../../common/settings';
 import { ActivatedRoute } from '@angular/router';
+import { ModalComponent } from '../modal/modal.component';
 
 @Component({
     selector: 'word-select',
@@ -23,6 +24,7 @@ import { ActivatedRoute } from '@angular/router';
 
 export class WordSelectComponent implements OnInit, OnDestroy {
     @ViewChildren('variantHtml') htmlVariants: ElementRef[];
+    @ViewChild('errorsModal') errorsModal: ModalComponent;
     @ViewChildren('progressElement') progressElement: ElementRef[];
     mainWord: string;
     random = Math.random();
@@ -219,11 +221,16 @@ export class WordSelectComponent implements OnInit, OnDestroy {
         this.isGameOver = true;
     }
 
-    newGame() {
+    newGame(words?: any[]) {
         this.isGameOver = false;
-        this.wrongWords = [];
         this.currentIndex = this.wrongCounter = this.rightCounter = 0;
-        this.electronService.send(GET_WORD_LIST);
+        if (!words) {
+            this.wrongWords = [];
+            this.electronService.send(GET_WORD_LIST);
+        } else {
+            this.onGetWordsHandler(words);
+            this.wrongWords = [];
+        }
         if (this.isTournamentMode) {
             this.players.forEach(player => player.score = 0);
             this.activateRandomPlayer();
