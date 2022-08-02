@@ -26,8 +26,8 @@ export const makeIpcService = (ipc) => {
     },
     getWordsCount() {
       return new Promise((resolve) => {
-        ipc.once('words: sent count', (_, result) => {
-          resolve(result.count)
+        ipc.once('words: sent count', (_, count) => {
+          resolve(count);
         });
         ipc.send('words: count');
       });

@@ -36,7 +36,7 @@ function prepareGameWords({ words, mode, shuffle, hardMode }) {
       }
 
       if (guessType === 'description') {
-        const answer = shuffle([currentWord.word, shuffle(currentWord.translations.slice())[0]])[0];
+        const answer = currentWord.word;
         result.push(...[
           {
             id: currentWord.id,
@@ -50,8 +50,7 @@ function prepareGameWords({ words, mode, shuffle, hardMode }) {
             label: answer,
             value: answer,
             type: 'answer',
-            isWord: answer === currentWord.word,
-            isTranslation: currentWord.translations.includes(answer)
+            isWord: true
           }
         ])
       }
@@ -141,10 +140,11 @@ export const makeWordStore = ({ wordInteractor, shuffle, useSettingsStore }) => 
     actions: {
       checkAnswer({ currentWord, variant }) {
         const wordObject = this.words.find(w => w.id === currentWord.id);
+        const possibleAnswer = variant?.value;
 
-        const isCorrect = wordObject.translations.includes(variant.value)
-          || wordObject.word === variant.value
-          || wordObject.description === variant.value;
+        const isCorrect = wordObject.translations.includes(possibleAnswer)
+          || wordObject.word === possibleAnswer
+          || wordObject.description === possibleAnswer
 
         if (isCorrect) {
           wordObject.rightWrongDiff++;

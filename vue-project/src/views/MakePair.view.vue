@@ -87,14 +87,14 @@ async function onCardClicked(card) {
     if (isCorrect.value) {
       removeCardFromGame(guess.id);
 
+      isCorrect.value = false;
+
       if (!words.value.length) {
         await store.saveGameResults();
       } else {
         await renderCards();
       }
     }
-
-    isCorrect.value = false;
   }
 }
 
