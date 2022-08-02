@@ -1,0 +1,57 @@
+@import "./base.css";
+
+$base-space: 8px;
+$orange: #EDAE49;
+
+* {
+  box-sizing: border-box;
+}
+
+.flex {
+  display: flex;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.bg-orange {
+  background: $orange;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.m-b-xs {
+  margin-bottom: $base-space;
+}
+
+.m-b-sm {
+  margin-bottom: $base-space * 2;
+}
+
+.m-b-md {
+  margin-bottom: $base-space * 3;
+}
+
+.m-b-lg {
+  margin-bottom: $base-space * 4;
+}
+
+.m-b-xl {
+  margin-bottom: $base-space * 5;
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.el-card {
+  transition: none !important;
+}
