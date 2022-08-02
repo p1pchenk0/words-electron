@@ -88,13 +88,17 @@ function createMainWindow() {
 
       function loadWindow() {
         mainWindow = new BrowserWindow({
-          width: 900,
-          height: 600,
+          width: 1200,
+          height: 800,
           backgroundColor: '#fff',
-          icon: `file://${__dirname}/dist/assets/logo.png`
+          icon: `file://${__dirname}/vue-project/dist/assets/logo.da9b9095.svg`,
+          webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+          }
         });
 
-        mainWindow.loadURL(`file://${__dirname}/dist/words-electron/index.html`);
+        mainWindow.loadURL(`file://${__dirname}/vue-project/dist/index.html`);
 
         mainWindow.on('closed', () => {
           mainWindow = null;
@@ -107,18 +111,18 @@ function createMainWindow() {
 // Handler for saving new word
 ipcMain.on(SEND_NEW_WORD, (event, newWord) => {
   db.words.findOne({
-    english: newWord.english
+    word: newWord.word
   }, (err, found) => {
     if (found) {
       mainWindow.webContents.send(NEW_WORD_RESULT, {
         success: false,
-        message: 'Такое слово уже есть'
+        message: 'Таке слово вже існує'
       });
     } else {
-      db.words.insert(newWord, (err, inserted) => {
+      db.words.insert(newWord, () => {
         mainWindow.webContents.send(NEW_WORD_RESULT, {
           success: true,
-          message: 'Слово добавлено'
+          message: 'Слово успішно збережено'
         });
       });
     }
@@ -129,12 +133,12 @@ ipcMain.on(SEND_NEW_WORD, (event, newWord) => {
 ipcMain.on(GET_WORD_LIST, (event, options, search) => {
   if (options && options.page) { // page is sent only from all words list tab
     let dbRequest = search ? db.words.find({
-      english: {
+      word: {
         $regex: new RegExp(search.toLowerCase())
       }
     }) : db.words.find({});
     let countRequest = search ? {
-      english: {
+      word: {
         $regex: new RegExp(search.toLowerCase())
       }
     } : {};
@@ -144,28 +148,29 @@ ipcMain.on(GET_WORD_LIST, (event, options, search) => {
     }
 
     db.words.count(countRequest, (err, count) => {
-      dbRequest.skip(wordsPerPage * (options.page - 1)).limit(wordsPerPage).exec((err, words) => {
-        mainWindow.webContents.send(WORD_LIST, {
-          words,
-          count
-        });
+      const perPage = options.wordsPerPage || wordsPerPage;
+
+      dbRequest.skip(perPage * (options.page - 1)).limit(perPage).exec((err, words) => {
+        mainWindow.webContents.send(WORD_LIST, words, count);
       });
     });
-  } else { // ask words for a game
+  } else {
+    const wordsAmount = options?.count || wordsCount;
+    // ask words for a game
     if (wrongCountPriority) { // set mode for getting most wrongly used words
-      db.words.find({}).limit(wordsCount).sort({ wrongCount: -1 }).exec((err, words) => {
+      db.words.find({}).limit(wordsAmount).sort({ rightWrongDiff: -1 }).exec((err, words) => {
         mainWindow.webContents.send(WORD_LIST, words);
       });
     } else {
       db.words.count({}, (err, count) => {
-        if (count <= wordsCount) {
+        if (count <= wordsAmount) {
           // total words are less then words per game, so no reason to get random documents
-          db.words.find({}).limit(wordsCount).exec((err, words) => {
+          db.words.find({}).limit(wordsAmount).exec((err, words) => {
             mainWindow.webContents.send(WORD_LIST, words);
           });
         } else {
           // "words per game" number is smaller than total amount of words, so get random documents
-          getSomeRandomDocuments(wordsCount, (words) => {
+          getSomeRandomDocuments(wordsAmount, (words) => {
             mainWindow.webContents.send(WORD_LIST, words);
           });
         }
@@ -180,13 +185,12 @@ ipcMain.on(SEND_GAME_RESULTS, (event, results) => {
   (function updateResults() {
     let result = copiedResults.pop();
     db.words.update({
-      english: result.english
+      word: result.word
     }, {
         $set: {
-          rightCount: result.rightCount,
-          wrongCount: result.wrongCount
+          rightWrongDiff: result.rightWrongDiff,
         }
-      }, {}, (err, res) => {
+      }, {}, () => {
         if (copiedResults.length) {
           updateResults();
         } else {
@@ -221,6 +225,15 @@ ipcMain.on(SAVE_SETTINGS, (events, settings) => {
       wordsPerPage = saved.wordsPerPage;
       wrongCountPriority = saved.wrongCountPriority;
 
+      if (err) {
+        mainWindow.webContents.send(SAVE_SETTINGS_RESULT, {
+          success: false,
+          message: err.message
+        });
+
+        return;
+      }
+
       mainWindow.webContents.send(SAVE_SETTINGS_RESULT, {
         success: true,
         message: 'Настройки сохранены'
@@ -231,7 +244,7 @@ ipcMain.on(SAVE_SETTINGS, (events, settings) => {
 // Handler for updating word
 ipcMain.on(UPDATE_WORD, (event, updatedWord) => {
   db.words.findOne({
-    english: updatedWord.english,
+    word: updatedWord.word,
     _id: {
       $ne: updatedWord._id
     }
@@ -265,9 +278,9 @@ ipcMain.on(UPDATE_WORD, (event, updatedWord) => {
 });
 
 // Handler for deleting words
-ipcMain.on(DELETE_WORD, (event, deleteWord) => {
+ipcMain.on(DELETE_WORD, (event, id) => {
   db.words.remove({
-    _id: deleteWord._id
+    _id: id
   }, {}, (err, deleted) => {
     if (err) {
       mainWindow.webContents.send(DELETE_WORD_RESULT, {
