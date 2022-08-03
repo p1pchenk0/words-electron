@@ -2,22 +2,24 @@
   <el-card v-if="isEmpty">
     <Empty />
   </el-card>
-  <GameOver v-else-if="isGameEnd" @startGame="startGame"/>
-  <div v-else ref="pairWrapper" class="make-pair__wrapper">
+  <GameOver
+    v-else-if="isGameEnd"
+    @startGame="startGame"
+  />
+  <div
+    v-else
+    ref="pairWrapper"
+    class="make-pair__wrapper"
+  >
     <div class="make-pair__sizer"></div>
     <div
-      v-for="(card, index) in words"
+      v-for="card in words"
       :key="card.id + card.label"
       class="make-pair__card"
-      :class="{
-        'make-pair__card--selected': checkCardSelected(card),
-        'make-pair__card--correct': isCorrect
-      }"
+      :class="getCardClasses(card)"
       @click="onCardClicked(card)"
     >
-      <el-card
-        class="bg-orange"
-      >
+      <el-card class="bg-orange">
         {{ card.label }}
       </el-card>
     </div>
@@ -37,7 +39,7 @@ const store = useWordStore();
 const masonry = ref(null);
 const selectedCards = ref([]);
 const words = ref([]);
-const isCorrect = ref(false);
+const isCorrect = ref(null);
 
 const isEmpty = computed(() => {
   return store.pairModeItems.length === 0;
@@ -47,12 +49,28 @@ const isGameEnd = computed(() => {
   return !words.value.length;
 });
 
+const isPairSelected = computed(() => {
+  return selectedCards.value.length === 2;
+});
+
+const isPairInvalid = computed(() => {
+  return ['isWord', 'isTranslation', 'isDescription'].some(key => selectedCards.value.every(card => card[key]));
+});
+
 const checkCardSelected = (card) => {
   return selectedCards.value.includes(card);
 }
 
+function getCardClasses(card) {
+  return {
+    'make-pair__card--selected': checkCardSelected(card),
+    'make-pair__card--correct': isCorrect.value === true,
+    'make-pair__card--wrong': isCorrect.value === false
+  }
+}
+
 async function onCardClicked(card) {
-  if (selectedCards.value.length === 2) return;
+  if (isPairSelected.value) return;
 
   if (selectedCards.value.includes(card)) {
     const cardIndex = selectedCards.value.findIndex(el => el === card);
@@ -64,18 +82,14 @@ async function onCardClicked(card) {
 
   selectedCards.value.push(card);
 
-  if (selectedCards.value.length === 2) {
-    if (
-      selectedCards.value.every(card => card.isWord) ||
-      selectedCards.value.every(card => card.isTranslation) ||
-      selectedCards.value.every(card => card.isDescription)
-    ) {
+  if (isPairSelected.value) {
+    if (isPairInvalid.value) {
       selectedCards.value = [];
 
       return;
     }
 
-    const guess = selectedCards.value.find(card => card.type === 'guess');
+    const guess = selectedCards.value.find(card => card.type === 'guess') || selectedCards.value[0];
     const answer = selectedCards.value.find(card => card.type === 'answer');
 
     isCorrect.value = store.checkAnswer({ currentWord: guess, variant: answer });
@@ -87,13 +101,15 @@ async function onCardClicked(card) {
     if (isCorrect.value) {
       removeCardFromGame(guess.id);
 
-      isCorrect.value = false;
+      isCorrect.value = null;
 
       if (!words.value.length) {
         await store.saveGameResults();
       } else {
         await renderCards();
       }
+    } else {
+      isCorrect.value = null;
     }
   }
 }
@@ -135,7 +151,11 @@ startGame();
 <style lang="scss">
 .make-pair {
   &__card, &__sizer {
-    width: 30%;
+    width: calc(25% - 12px);
+
+    @media (max-width: 1024px) {
+      width: calc(33% - 8px);
+    }
   }
 
   &__card {
@@ -151,6 +171,13 @@ startGame();
     &--selected#{&}--correct {
       .el-card {
         background-color: green;
+        color: white;
+      }
+    }
+
+    &--selected#{&}--wrong {
+      .el-card {
+        background-color: #881919;
         color: white;
       }
     }
