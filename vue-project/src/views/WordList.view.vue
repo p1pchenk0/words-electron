@@ -1,4 +1,8 @@
 <template>
+  <el-alert class="m-b-sm hidden-md-and-up" :closable="false">
+    Таблица может не полностью помещаться на экране, есть возможность горизонтальной прокрутки
+  </el-alert>
+
   <el-table
     @sort-change="onSort"
     class-name="list-table m-b-sm"
@@ -21,7 +25,7 @@
         </div>
       </template>
     </el-table-column>
-    <el-table-column prop="description" label="Описание"/>
+    <el-table-column prop="description" label="Описание" class-name="list-table__description"/>
     <el-table-column prop="rightWrongDiff" class-name="list-table__diff" sortable="custom">
       <template #header>
         Разница
@@ -184,6 +188,12 @@ onMounted(() => {
 
   &__translations {
     min-width: 200px !important;
+  }
+
+  &__description {
+    @media (max-width: 1024px) {
+      min-width: 200px !important;
+    }
   }
 
   &__actions {

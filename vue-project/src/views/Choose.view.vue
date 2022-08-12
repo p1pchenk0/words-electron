@@ -1,6 +1,6 @@
 <template>
   <el-card v-if="isEmptyWords">
-    <Empty />
+    <Empty/>
   </el-card>
   <GameOver v-else-if="isGameEnd" @startGame="startGame"/>
   <template v-else>
@@ -17,48 +17,56 @@
     </el-row>
     <template v-if="currentWord.variants.length">
       <el-row class="m-b-sm" :gutter="16">
-        <el-col :span="12">
+        <el-col :xs="24" :sm="24" :md="12" :span="12">
           <el-card
+            v-if="currentWord.variants[0]"
             ref="cardOne"
             :key="currentWord.id + currentWord.variants[0].label"
             @click="checkAnswer(0)"
             :style="{ minHeight: cardHeight + 'px' }"
-            class="choose__guess-card text-center"
+            class="choose__guess-card text-center m-b-sm--mobile"
+            :class="getCardClasses(0)"
           >
             {{ currentWord.variants[0].label }}
           </el-card>
         </el-col>
-        <el-col :span="12">
+        <el-col :xs="24" :sm="24" :md="12" :span="12">
           <el-card
+            v-if="currentWord.variants[1]"
             ref="cardTwo"
             :key="currentWord.id + currentWord.variants[1].label"
             @click="checkAnswer(1)"
             :style="{ minHeight: cardHeight + 'px' }"
             class="text-center choose__guess-card"
+            :class="getCardClasses(1)"
           >
             {{ currentWord.variants[1].label }}
           </el-card>
         </el-col>
       </el-row>
       <el-row :gutter="16">
-        <el-col :span="12">
+        <el-col :xs="24" :sm="24" :md="12" :span="12">
           <el-card
+            v-if="currentWord.variants[2]"
             ref="cardThree"
             :key="currentWord.id + currentWord.variants[2].label"
             @click="checkAnswer(2)"
             :style="{ minHeight: cardHeight + 'px' }"
-            class="text-center choose__guess-card"
+            class="text-center choose__guess-card m-b-sm--mobile"
+            :class="getCardClasses(2)"
           >
             {{ currentWord.variants[2].label }}
           </el-card>
         </el-col>
-        <el-col :span="12">
+        <el-col :xs="24" :sm="24" :md="12" :span="12">
           <el-card
+            v-if="currentWord.variants[3]"
             ref="cardFour"
             :key="currentWord.id + currentWord.variants[3].label"
             @click="checkAnswer(3)"
             :style="{ minHeight: cardHeight + 'px' }"
             class="text-center choose__guess-card"
+            :class="getCardClasses(3)"
           >
             {{ currentWord.variants[3].label }}
           </el-card>
@@ -69,12 +77,12 @@
 </template>
 
 <script setup>
-import { computed, ref, nextTick } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import { useWordStore } from "../root";
-import { ElNotification } from "element-plus";
 import GameOver from "../components/GameOver.vue";
-import { MESSAGES } from "../constants";
 import Empty from "../components/Empty.vue";
+import { useNotification } from "../composables/notification";
+import { wait } from "../utils";
 
 const store = useWordStore();
 const currentRound = ref(0);
@@ -83,6 +91,9 @@ const cardOne = ref(null);
 const cardTwo = ref(null);
 const cardThree = ref(null);
 const cardFour = ref(null);
+const selectedCardIndex = ref(null);
+
+const { notify } = useNotification();
 
 const currentWord = computed(() => {
   return store.chooseModeItems[currentRound.value] || { variants: [] };
@@ -96,17 +107,27 @@ const isGameEnd = computed(() => {
   return currentRound.value === store.chooseModeItems.length;
 });
 
-async function checkAnswer(index) {
-  const isCorrect = store.checkAnswer({ currentWord: currentWord.value, variant: currentWord.value.variants[index] });
-  const correctAnswer = currentWord.value.variants.find(el => el.isCorrect).value;
+function getCardClasses(index) {
+  if (selectedCardIndex.value !== index) return;
 
-  ElNotification({
-    type: isCorrect ? 'success' : 'error',
-    title: isCorrect ? MESSAGES.SUCCESS_TITLE : MESSAGES.ERROR_TITLE,
-    message: isCorrect ? `Действительно, это ${correctAnswer}` : `Правильный ответ: ${correctAnswer}`,
-    duration: isCorrect ? 2000 : 4000,
-    showClose: !isCorrect
-  });
+  const isCorrect = currentWord.value.variants[index].isCorrect;
+
+  return {
+    'choose__guess-card--correct': isCorrect,
+    'choose__guess-card--wrong': !isCorrect
+  };
+}
+
+async function checkAnswer(index) {
+  if (selectedCardIndex.value !== null) return;
+
+  selectedCardIndex.value = index;
+
+  store.checkAnswer({ currentWord: currentWord.value, variant: currentWord.value.variants[index] });
+
+  await wait(500);
+
+  selectedCardIndex.value = null;
 
   currentRound.value++;
 
@@ -133,7 +154,7 @@ async function alignCardsHeight() {
   await nextTick();
   cardHeight.value = 0;
   await nextTick();
-  cardHeight.value = Math.max(...[cardOne, cardTwo, cardThree, cardFour].map(card => card.value.$el.clientHeight));
+  cardHeight.value = Math.max(...[cardOne, cardTwo, cardThree, cardFour].map(card => card.value?.$el.clientHeight));
 }
 
 startGame();
@@ -162,6 +183,16 @@ startGame();
     justify-content: center;
     cursor: pointer;
     font-size: 20px;
+
+    &--correct {
+      background-color: green;
+      color: white;
+    }
+
+    &--wrong {
+      background-color: #881919;
+      color: white;
+    }
   }
 }
 </style>

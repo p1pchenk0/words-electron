@@ -8,6 +8,5 @@ export const PATH_NAMES = {
 
 export const MESSAGES = {
   ERROR_TITLE: 'Ууупс!',
-  SUCCESS_TITLE: 'Браво!',
-
+  SUCCESS_TITLE: 'Браво!'
 }

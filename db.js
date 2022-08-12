@@ -80,9 +80,11 @@ module.exports = {
       const wordsAmount = options?.count || wordsCount;
 
       if (wrongCountPriority) {
-        const dbRequest = wordsCollection.find({}).limit(wordsAmount).sort({ rightWrongDiff: -1 });
+        const dbRequest = wordsCollection.find({}).limit(wordsAmount).sort({ rightWrongDiff: 1 });
 
-        return await promisify(dbRequest.exec.bind(dbRequest));
+        const [, words] = await promisify(dbRequest.exec.bind(dbRequest));
+
+        return words;
       }
 
       const [, count] = await promisify(wordsCollection.count.bind(wordsCollection), {});
@@ -90,7 +92,9 @@ module.exports = {
       if (count <= wordsAmount) {
         const dbRequest = wordsCollection.find({}).limit(wordsAmount);
 
-        return await promisify(dbRequest.exec.bind(dbRequest));
+        const [, words] = await promisify(dbRequest.exec.bind(dbRequest));
+
+        return words;
       }
 
       const words = [];

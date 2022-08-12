@@ -5,17 +5,17 @@
     </el-col>
   </el-row>
   <el-row class="m-b-sm" :gutter="16">
-    <el-col :span="6">
+    <el-col :xs="24" :sm="12" :md="6" class="m-b-xs">
       <el-input v-model="translation" size="large" placeholder="Перевод"/>
     </el-col>
-    <el-col :span="6">
-      <el-input v-model="translation2" size="large" placeholder="Перевод #2"/>
+    <el-col :xs="24" :sm="12" :md="6" class="m-b-xs">
+      <el-input v-model="translation2" size="large" placeholder="Перевод #2 (опционально)"/>
     </el-col>
-    <el-col :span="6">
-      <el-input v-model="translation3" size="large" placeholder="Перевод #3"/>
+    <el-col :xs="24" :sm="12" :md="6" class="m-b-xs">
+      <el-input v-model="translation3" size="large" placeholder="Перевод #3 (опционально)"/>
     </el-col>
-    <el-col :span="6">
-      <el-input v-model="translation4" size="large" placeholder="Перевод #4"/>
+    <el-col :xs="24" :sm="12" :md="6" class="m-b-xs">
+      <el-input v-model="translation4" size="large" placeholder="Перевод #4 (опционально)"/>
     </el-col>
   </el-row>
   <el-row class="m-b-md">
@@ -24,12 +24,13 @@
         v-model="description"
         :rows="4"
         type="textarea"
-        placeholder="Определение слова (убедитесь, что можете перевести само определение)"
+        placeholder="Определение слова (убедитесь, что оно состоит из понятных Вам слов)"
       />
     </el-col>
   </el-row>
   <el-button
     :disabled="isDisabled"
+    class="submit-btn"
     type="primary"
     size="large"
     @click="onFormSubmit"
@@ -39,7 +40,7 @@
 </template>
 
 <script setup>
-import { computed, ref, defineProps, watchEffect } from 'vue';
+import { computed, ref, defineProps, watchEffect, onMounted } from 'vue';
 
 const props = defineProps(['wordObject']);
 
@@ -64,12 +65,14 @@ const formattedTranslations = computed(() => [
 ].map(el => el.value.trim()).filter(Boolean));
 
 const isDisabled = computed(() => {
-  if (!formattedWord.value.length) return true;
-
-  return !formattedTranslations.value.length;
+  return [formattedWord, formattedTranslations].some(e => !e.value.length);
 });
 
 const emit = defineEmits(['wordSubmit']);
+
+onMounted(() => {
+  wordInput.value.focus();
+});
 
 watchEffect(() => {
   if (!props.wordObject) return;
@@ -106,3 +109,11 @@ function resetForm() {
 
 defineExpose({ resetForm });
 </script>
+
+<style lang="scss">
+.submit-btn {
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+</style>

@@ -27,24 +27,24 @@ $orange: #EDAE49;
   text-align: center;
 }
 
-.m-b-xs {
-  margin-bottom: $base-space;
+$directions: (l: left, t: top, r: right, b: bottom);
+$types: (m: margin, p: padding);
+$sizes: (xs: 1, sm: 2, md: 3, lg: 4, xl: 5);
+
+@each $dir, $direction in $directions {
+  @each $t, $type in $types {
+    @each $size, $factor in $sizes {
+      .#{$t}-#{$dir}-#{$size} {
+        #{$type}-#{$direction}: $base-space * $factor;
+      }
+    }
+  }
 }
 
-.m-b-sm {
-  margin-bottom: $base-space * 2;
-}
-
-.m-b-md {
-  margin-bottom: $base-space * 3;
-}
-
-.m-b-lg {
-  margin-bottom: $base-space * 4;
-}
-
-.m-b-xl {
-  margin-bottom: $base-space * 5;
+.m-b-sm--mobile {
+  @media (max-width: 991px) {
+    margin-bottom: $base-space * 2;
+  }
 }
 
 #app {

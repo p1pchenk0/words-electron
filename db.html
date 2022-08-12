@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DB</title>
+</head>
+<body>
+<script>
+  const db = window.indexedDB ||
+    window.mozIndexedDB ||
+    window.webkitIndexedDB ||
+    window.msIndexedDB ||
+    window.shimIndexedDB;
+  const DB_NAME = 'cars';
+  const openRequest = db.open(DB_NAME, 1);
+
+  openRequest.onerror = (event) => {
+    console.log('oops');
+    console.log(event);
+  };
+
+  openRequest.onupgradeneeded = () => {
+    const { result } = openRequest;
+    const store = result.createObjectStore(DB_NAME, { keyPath: 'id' });
+
+    store.createIndex('cars_colour', ['colour'], { unique: false });
+    store.createIndex('color_and_make', ['colour', 'make'], { unique: false });
+  }
+
+  openRequest.onsuccess = () => {
+    const { result } = openRequest;
+    const transaction = result.transaction(DB_NAME, 'readwrite');
+    const store = transaction.objectStore(DB_NAME);
+    const colourIndex = store.index('cars_colour');
+    const colourMakeIndex = store.index('color_and_make');
+
+    store.put({ id: 1, colour: 'Red', make: 'Toyota' });
+    store.put({ id: 2, colour: 'Red', make: 'Kia' });
+    store.put({ id: 3, colour: 'Blue', make: 'Honda' });
+    store.put({ id: 4, colour: 'Silver', make: 'Subaru' });
+
+    const idQuery = store.get(4);
+    const colorQuery = colourIndex.getAll(['Red']);
+    const mcQuery = colourMakeIndex.get(['Blue', 'Honda']);
+
+    idQuery.onsuccess = () => console.log(idQuery.result);
+    colorQuery.onsuccess = () => console.log(colorQuery.result);
+    mcQuery.onsuccess = () => console.log(mcQuery.result);
+
+    transaction.oncomplete = () => result.close();
+  }
+
+</script>
+</body>
+</html>

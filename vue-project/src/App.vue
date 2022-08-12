@@ -9,7 +9,7 @@ settingsStore.getSettings();
 </script>
 
 <template>
-  <Navigation class="m-b-sm" />
+  <Navigation />
   <RouterView />
 </template>
 

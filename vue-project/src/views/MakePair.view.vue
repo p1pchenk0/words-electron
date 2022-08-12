@@ -9,7 +9,7 @@
   <div
     v-else
     ref="pairWrapper"
-    class="make-pair__wrapper"
+    class="make-pair__wrapper pointer"
   >
     <div class="make-pair__sizer"></div>
     <div
@@ -155,6 +155,10 @@ startGame();
 
     @media (max-width: 1024px) {
       width: calc(33% - 8px);
+    }
+
+    @media (max-width: 768px) {
+      width: calc(50% - 8px);
     }
   }
 
