@@ -31,6 +31,9 @@ export const makeWordStore = ({ wordInteractor, useSettingsStore }) => {
       checkAnswer({ currentWord, variant }) {
         return wordInteractor.checkWordVariantChoice({ words: this.words, word: currentWord, variant });
       },
+      async increaseWordPriority(word) {
+        return wordInteractor.increaseWordPriority({ word, words: this.words });
+      },
       async saveWord(wordPayload) {
         return wordInteractor.saveWord(wordPayload);
       },

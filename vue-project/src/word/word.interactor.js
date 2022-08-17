@@ -107,6 +107,13 @@ export const makeWordInteractor = ({ wordMapper, wordRepo, shuffle }) => {
 
       return shuffle(result);
     },
+    async increaseWordPriority({ word, words }) {
+      const wordObject = words.find(w => w.id === word.id);
+
+      wordObject.rightWrongDiff -= 10;
+
+      return this.saveGameResults([wordObject]);
+    },
     checkWordVariantChoice({ word, variant, words }) {
       const wordObject = words.find(w => w.id === word.id);
       const possibleAnswer = variant?.value;

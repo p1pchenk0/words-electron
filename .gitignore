@@ -40,3 +40,4 @@ testem.log
 Thumbs.db
 settings.db
 words.db
+/out/

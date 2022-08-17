@@ -20,19 +20,29 @@
       @click="onCardClicked(card)"
     >
       <el-card class="bg-orange">
-        {{ card.label }}
+        {{ card.label }} - {{  card.type }}
+        <el-button
+          v-if="isCurrentCardSelected(card)"
+          type="primary"
+          :icon="Star"
+          circle
+          @click.stop="increaseWordPriority(card)"
+        />
       </el-card>
     </div>
   </div>
 </template>
 
 <script setup>
+import { Star } from "@element-plus/icons-vue";
 import * as Masonry from 'masonry-layout';
 import { computed, nextTick, ref } from "vue";
 import { useWordStore } from "../root";
 import { wait } from "../utils";
 import GameOver from '../components/GameOver.vue';
 import Empty from '../components/Empty.vue';
+import { ElNotification } from "element-plus";
+import { MESSAGES } from "../constants";
 
 const pairWrapper = ref(null);
 const store = useWordStore();
@@ -53,20 +63,49 @@ const isPairSelected = computed(() => {
   return selectedCards.value.length === 2;
 });
 
+const isOneCardSelected = computed(() => {
+  return selectedCards.value.length === 1;
+});
+
 const isPairInvalid = computed(() => {
-  return ['isWord', 'isTranslation', 'isDescription'].some(key => selectedCards.value.every(card => card[key]));
+  const sameType = ['guess', 'answer'].some(type => selectedCards.value.every(card => card.type === type));
+
+  return sameType || ['isWord', 'isTranslation', 'isDescription'].some(key => selectedCards.value.every(card => card[key]));
 });
 
 const checkCardSelected = (card) => {
   return selectedCards.value.includes(card);
 }
 
+function isCurrentCardSelected(card) {
+  return isOneCardSelected.value && selectedCards.value.includes(card);
+}
+
+function checkCardTransparency(card) {
+  if (!isOneCardSelected.value || selectedCards.value.includes(card)) return false;
+
+  const [{ type: selectedCardType }] = selectedCards.value;
+
+  return card.type === selectedCardType;
+}
+
 function getCardClasses(card) {
   return {
     'make-pair__card--selected': checkCardSelected(card),
+    'make-pair__card--transparent': checkCardTransparency(card),
     'make-pair__card--correct': isCorrect.value === true,
     'make-pair__card--wrong': isCorrect.value === false
   }
+}
+
+async function increaseWordPriority(card) {
+  const maybeError = await store.increaseWordPriority(card);
+
+  ElNotification({
+    type: !maybeError ? 'success' : 'error',
+    title: !maybeError ? MESSAGES.SUCCESS_TITLE : MESSAGES.ERROR_TITLE,
+    message: !maybeError ? 'Приоритет слова повышен' : (maybeError.message || 'Что-то пошло не так')
+  });
 }
 
 async function onCardClicked(card) {
@@ -89,7 +128,7 @@ async function onCardClicked(card) {
       return;
     }
 
-    const guess = selectedCards.value.find(card => card.type === 'guess') || selectedCards.value[0];
+    const guess = selectedCards.value.find(card => card.type === 'guess');
     const answer = selectedCards.value.find(card => card.type === 'answer');
 
     isCorrect.value = store.checkAnswer({ currentWord: guess, variant: answer });
@@ -165,10 +204,25 @@ startGame();
   &__card {
     margin-bottom: 16px;
 
+    .el-card {
+      .el-button {
+        position: absolute;
+        top: 5px;
+        right: -8px;
+      }
+    }
+
+    &--transparent {
+      .el-card {
+        opacity: 0.5;
+      }
+    }
+
     &--selected {
       .el-card {
         top: -8px !important;
         left: -8px !important;
+        overflow: visible;
       }
     }
 
