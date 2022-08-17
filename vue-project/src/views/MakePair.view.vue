@@ -1,6 +1,6 @@
 <template>
   <el-card v-if="isEmpty">
-    <Empty />
+    <Empty/>
   </el-card>
   <GameOver
     v-else-if="isGameEnd"
@@ -20,14 +20,26 @@
       @click="onCardClicked(card)"
     >
       <el-card class="bg-orange">
-        {{ card.label }} - {{  card.type }}
-        <el-button
+        {{ card.label }}
+        <el-popover
           v-if="isCurrentCardSelected(card)"
-          type="primary"
-          :icon="Star"
-          circle
-          @click.stop="increaseWordPriority(card)"
-        />
+          placement="top"
+          :width="220"
+          trigger="hover"
+        >
+          <template #reference>
+            <el-button
+              type="primary"
+              :icon="Star"
+              circle
+              @click.stop="increaseWordPriority(card)"
+            />
+          </template>
+          <template #default>
+            Повысить приоритет, чтобы<br>
+            слово встречалось чаще
+          </template>
+        </el-popover>
       </el-card>
     </div>
   </div>
@@ -207,8 +219,8 @@ startGame();
     .el-card {
       .el-button {
         position: absolute;
-        top: 5px;
-        right: -8px;
+        top: -1px;
+        right: -10px;
       }
     }
 

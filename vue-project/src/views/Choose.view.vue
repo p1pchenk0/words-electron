@@ -81,7 +81,6 @@ import { computed, nextTick, ref } from 'vue';
 import { useWordStore } from "../root";
 import GameOver from "../components/GameOver.vue";
 import Empty from "../components/Empty.vue";
-import { useNotification } from "../composables/notification";
 import { wait } from "../utils";
 
 const store = useWordStore();
@@ -92,8 +91,6 @@ const cardTwo = ref(null);
 const cardThree = ref(null);
 const cardFour = ref(null);
 const selectedCardIndex = ref(null);
-
-const { notify } = useNotification();
 
 const currentWord = computed(() => {
   return store.chooseModeItems[currentRound.value] || { variants: [] };
