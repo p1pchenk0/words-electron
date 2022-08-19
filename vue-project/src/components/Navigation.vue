@@ -37,7 +37,7 @@
 
 <script setup>
 import { useRoute, useRouter } from "vue-router";
-import { PATH_NAMES } from "../constants";
+import { PATH_NAMES } from "@/constants";
 import { computed, ref } from "vue";
 
 const router = useRouter();

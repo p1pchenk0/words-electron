@@ -9,55 +9,32 @@ export const makeWordInteractor = ({ wordMapper, wordRepo, shuffle }) => {
         const currentWord = wordsCopy[i];
 
         if (mode === 'pair') {
-          const guessTypes = ['word'];
+          const answers = [...currentWord.translations];
 
-          if (currentWord.description) guessTypes.push('description');
+          if (currentWord.description) answers.push(currentWord.description);
 
-          const guessType = shuffle(guessTypes)[0];
+          const [answer] = shuffle(answers);
 
-          if (guessType === 'word') {
-            const answer = shuffle(currentWord.translations.slice())[0];
-            result.push(...[
-              {
-                id: currentWord.id,
-                label: currentWord.word,
-                value: currentWord.word,
-                type: 'guess',
-                isWord: true,
-              },
-              {
-                id: currentWord.id,
-                label: answer,
-                value: answer,
-                type: 'answer',
-                isTranslation: true,
-              }
-            ])
-          }
-
-          if (guessType === 'description') {
-            const answer = currentWord.word;
-            result.push(...[
-              {
-                id: currentWord.id,
-                label: currentWord.description,
-                value: currentWord.description,
-                type: 'guess',
-                isDescription: true,
-              },
-              {
-                id: currentWord.id,
-                label: answer,
-                value: answer,
-                type: 'answer',
-                isWord: true
-              }
-            ])
-          }
+          result.push(...[
+            {
+              id: currentWord.id,
+              label: currentWord.word,
+              value: currentWord.word,
+              type: 'guess',
+              isWord: true,
+            },
+            {
+              id: currentWord.id,
+              label: answer,
+              value: answer,
+              type: 'answer',
+              isTranslation: currentWord.translations.includes(answer),
+              isDescription: currentWord.description === answer,
+            }
+          ]);
         }
 
         if (mode === 'choose') {
-
           const otherWords = shuffle(words.slice().filter(el => el.word !== currentWord.word)).slice(0, 3);
 
           const modes = ['word', 'translation'];

@@ -4,7 +4,7 @@ import ChooseView from '../views/Choose.view.vue';
 import MakePairView from '../views/MakePair.view.vue';
 import WordListView from '../views/WordList.view.vue';
 import SettingsView from '../views/Settings.view.vue';
-import { PATH_NAMES } from "../constants";
+import { PATH_NAMES } from "@/constants";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),

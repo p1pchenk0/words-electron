@@ -78,10 +78,10 @@
 
 <script setup>
 import { computed, nextTick, ref } from 'vue';
-import { useWordStore } from "../root";
+import { useWordStore } from "@/root";
 import GameOver from "../components/GameOver.vue";
 import Empty from "../components/Empty.vue";
-import { wait } from "../utils";
+import { wait } from "@/utils";
 
 const store = useWordStore();
 const currentRound = ref(0);

@@ -70,9 +70,9 @@
 <script setup>
 import { Edit, Delete } from '@element-plus/icons-vue';
 import { ElMessageBox, ElNotification } from 'element-plus';
-import { useSettingsStore, useWordStore } from "../root";
+import { useSettingsStore, useWordStore } from "@/root";
 import { computed, onMounted, ref, watch } from "vue";
-import { MESSAGES } from "../constants";
+import { MESSAGES } from "@/constants";
 import Empty from "../components/Empty.vue";
 import WordForm from "../components/WordForm.vue";
 import Tooltip from "../components/Tooltip.vue";

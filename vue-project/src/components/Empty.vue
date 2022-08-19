@@ -7,7 +7,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { PATH_NAMES } from "../constants";
+import { PATH_NAMES } from "@/constants";
 
 const router = useRouter();
 

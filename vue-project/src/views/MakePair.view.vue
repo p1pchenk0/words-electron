@@ -49,12 +49,14 @@
 import { Star } from "@element-plus/icons-vue";
 import * as Masonry from 'masonry-layout';
 import { computed, nextTick, ref } from "vue";
-import { useWordStore } from "../root";
-import { wait } from "../utils";
+import { useWordStore } from "@/root";
+import { wait } from "@/utils";
 import GameOver from '../components/GameOver.vue';
 import Empty from '../components/Empty.vue';
 import { ElNotification } from "element-plus";
-import { MESSAGES } from "../constants";
+import { MESSAGES } from "@/constants";
+
+// TODO: add an extra card "No right answer" for respective game mode
 
 const pairWrapper = ref(null);
 const store = useWordStore();

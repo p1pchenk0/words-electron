@@ -14,10 +14,10 @@
 
 <script setup>
 import WordForm from '../components/WordForm.vue';
-import { useWordStore } from "../root";
+import { useWordStore } from "@/root";
 import { ElNotification } from "element-plus";
 import { ref } from 'vue';
-import { MESSAGES } from "../constants";
+import { MESSAGES } from "@/constants";
 
 const store = useWordStore();
 const word = ref({ word: 'cat', translations: ['кот'] })

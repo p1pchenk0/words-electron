@@ -81,10 +81,10 @@
 </template>
 
 <script setup>
-import { useSettingsStore } from "../root";
+import { useSettingsStore } from "@/root";
 import { computed, onMounted, ref } from "vue";
 import { ElNotification } from "element-plus";
-import { MESSAGES } from "../constants";
+import { MESSAGES } from "@/constants";
 import Tooltip from "../components/Tooltip.vue";
 
 const settingsStore = useSettingsStore();
