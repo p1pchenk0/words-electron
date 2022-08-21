@@ -15,6 +15,12 @@ $orange: #EDAE49;
   align-items: center;
 }
 
+.justify-between {
+  @extend .flex;
+
+  justify-content: space-between;
+}
+
 .bg-orange {
   background: $orange;
 }

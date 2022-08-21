@@ -45,15 +45,24 @@
       </template>
     </el-table-column>
   </el-table>
-  <el-pagination
-    background
-    hide-on-single-page
-    layout="prev, pager, next"
-    :page-size="settingsStore.wordsPerPage"
-    :current-page="currentPage"
-    :total="store.totalWordsCount"
-    @update:current-page="onPageChange"
-  />
+  <div class="justify-between">
+    <el-pagination
+      background
+      hide-on-single-page
+      layout="prev, pager, next"
+      :page-size="settingsStore.wordsPerPage"
+      :current-page="currentPage"
+      :total="store.totalWordsCount"
+      @update:current-page="onPageChange"
+    />
+    <el-alert
+      class="words-count"
+      :title="`Слов: ${store.totalWordsCount}`"
+      :closable="false"
+      type="info"
+    />
+  </div>
+
 
   <el-dialog
     v-model="isEditDialogOpen"
@@ -214,5 +223,9 @@ onMounted(() => {
   .cell {
     word-break: normal;
   }
+}
+
+.words-count {
+  width: auto;
 }
 </style>
