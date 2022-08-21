@@ -9,11 +9,7 @@ export const makeWordInteractor = ({ wordMapper, wordRepo, shuffle }) => {
         const currentWord = wordsCopy[i];
 
         if (mode === 'pair') {
-          const answers = [...currentWord.translations];
-
-          if (currentWord.description) answers.push(currentWord.description);
-
-          const [answer] = shuffle(answers);
+          const answer = currentWord.getRandomVariant();
 
           result.push(...[
             {
@@ -51,7 +47,7 @@ export const makeWordInteractor = ({ wordMapper, wordRepo, shuffle }) => {
             answerMode = 'translation';
           }
           if (guessMode === 'translation') {
-            guessWord = shuffle(currentWord.translations.slice())[0];
+            guessWord = currentWord.getRandomVariant({ translationsOnly: true });
             answerMode = 'word';
           }
           if (guessMode === 'description') {
@@ -67,7 +63,7 @@ export const makeWordInteractor = ({ wordMapper, wordRepo, shuffle }) => {
               let answer;
 
               if (answerMode === 'word') answer = el.word;
-              if (answerMode === 'translation') answer = shuffle(el.translations.slice())[0];
+              if (answerMode === 'translation') answer = el.getRandomVariant({ translationsOnly: true });
 
               return { label: answer, value: answer, isCorrect: el === currentWord };
             })
@@ -87,25 +83,14 @@ export const makeWordInteractor = ({ wordMapper, wordRepo, shuffle }) => {
     async increaseWordPriority({ word, words }) {
       const wordObject = words.find(w => w.id === word.id);
 
-      wordObject.rightWrongDiff -= 10;
+      wordObject.increaseWrongCount();
 
       return this.saveGameResults([wordObject]);
     },
     checkWordVariantChoice({ word, variant, words }) {
       const wordObject = words.find(w => w.id === word.id);
-      const possibleAnswer = variant?.value;
 
-      const isCorrect = wordObject.translations.includes(possibleAnswer)
-        || wordObject.word === possibleAnswer
-        || wordObject.description === possibleAnswer
-
-      if (isCorrect) {
-        wordObject.rightWrongDiff++;
-      } else {
-        wordObject.rightWrongDiff--;
-      }
-
-      return isCorrect;
+      return wordObject.tryAnswer(variant?.value);
     },
     async saveWord(wordPayload) {
       const formattedWord = wordMapper.toApiPayload(wordPayload);

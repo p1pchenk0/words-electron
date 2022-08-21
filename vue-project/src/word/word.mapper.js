@@ -1,4 +1,4 @@
-export const wordMapper = {
+export const makeWordMapper = (makeWord) => ({
   toApiPayload(data) {
     const apiPayload = {};
     const { id, word, translations, description, rightWrongDiff } = data;
@@ -13,14 +13,6 @@ export const wordMapper = {
     return apiPayload;
   },
   toUI(data) {
-    const { _id, word, translations, description, rightWrongDiff } = data;
-
-    return {
-      id: _id,
-      word,
-      translations,
-      description: description || '',
-      rightWrongDiff: rightWrongDiff || 0
-    }
-  }
-}
+    return makeWord(data);
+  },
+});

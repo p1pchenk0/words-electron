@@ -86,6 +86,8 @@ const deleteCandidateId = ref(null);
 const wordBeingEdited = ref(null);
 const isEditDialogOpen = ref(false);
 
+// TODO: implement word search
+
 const tableData = computed(() => {
   return store.words;
 });

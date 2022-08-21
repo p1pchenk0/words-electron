@@ -1,6 +1,6 @@
 import { makeWordStore } from "./stores/word.store";
 import { makeWordInteractor } from "./word/word.interactor";
-import { wordMapper } from "./word/word.mapper";
+import { makeWordMapper } from "./word/word.mapper";
 import { makeWordRepo } from "./word/word.repo";
 import { shuffle } from "./utils";
 import { makeSettingsRepo } from "./settings/settings.repo";
@@ -11,10 +11,13 @@ import { makeWordService } from "./services/ipc/words.ipc.service";
 import { makeSettingsService } from "./services/ipc/settings.ipc.service";
 import { localSettingsService } from "./services/storage/settings.service";
 import { makeLocalWordsService } from "./services/storage/words.service";
+import { makeWordFactory } from "@/word/word";
 
 
 const isElectron = window.require && window.require('electron');
 const ipcRenderer = isElectron && window.require('electron').ipcRenderer;
+
+const makeWord = makeWordFactory(shuffle);
 
 // API layer
 const wordService = isElectron ? makeWordService(ipcRenderer) : makeLocalWordsService();
@@ -23,6 +26,9 @@ const settingsService = isElectron ? makeSettingsService(ipcRenderer) : localSet
 // Data Access layer
 const wordRepo = makeWordRepo(wordService);
 const settingsRepo = makeSettingsRepo(settingsService);
+
+// Interlayer connection
+const wordMapper = makeWordMapper(makeWord);
 
 // Business logic layer
 const wordInteractor = makeWordInteractor({ wordMapper, wordRepo, shuffle });
