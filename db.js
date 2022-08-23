@@ -64,7 +64,9 @@ module.exports = {
       if (options && options.page) {
         const perPage = options.wordsPerPage || wordsPerPage;
 
-        let dataRequest = wordsCollection.find({});
+        const findOptions = options.search ? { word: { $regex: new RegExp(options.search.trim().toLowerCase()) } } : {};
+
+        let dataRequest = wordsCollection.find(findOptions);
 
         if (options.order && options.sortBy) {
           dataRequest = dataRequest.sort({ [options.sortBy]: options.order === 'asc' ? 1 : -1 });
@@ -114,14 +116,15 @@ module.exports = {
       return words;
     }
 
-    async function getWordsCount() {
-      const [, count] = await promisify(wordsCollection.count.bind(wordsCollection), {});
+    async function getWordsCount(options = {}) {
+      const findOptions = options.search ? { word: { $regex: new RegExp(options.search.trim().toLowerCase()) } } : {};
+      const [, count] = await promisify(wordsCollection.count.bind(wordsCollection), findOptions);
 
       return count;
     }
 
     async function saveWord(payload) {
-      const [,duplicate] = await promisify(wordsCollection.findOne.bind(wordsCollection), { word: payload.word });
+      const [, duplicate] = await promisify(wordsCollection.findOne.bind(wordsCollection), { word: payload.word });
 
       if (duplicate) {
         return {

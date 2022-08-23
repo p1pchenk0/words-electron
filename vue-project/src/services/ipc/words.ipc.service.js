@@ -24,12 +24,12 @@ export const makeWordService = (ipc) => {
         ipc.send('word: send results', words);
       });
     },
-    getWordsCount() {
+    getWordsCount(params = {}) {
       return new Promise((resolve) => {
         ipc.once('words: sent count', (_, count) => {
           resolve(count);
         });
-        ipc.send('words: count');
+        ipc.send('words: count', params);
       });
     },
     deleteWordById(id) {

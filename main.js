@@ -67,8 +67,8 @@ async function createMainWindow() {
     mainWindow.webContents.send(WORD_LIST, words);
   });
 
-  ipcMain.on(GET_WORDS_COUNT, async () => {
-    const count = await dataAccess.getWordsCount();
+  ipcMain.on(GET_WORDS_COUNT, async (event, options) => {
+    const count = await dataAccess.getWordsCount(options);
 
     mainWindow.webContents.send(SENT_WORDS_COUNT, count);
   });

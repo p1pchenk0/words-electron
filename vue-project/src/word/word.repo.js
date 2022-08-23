@@ -27,8 +27,8 @@ export const makeWordRepo = (api) => {
         return err;
       }
     },
-    async getWordsCount() {
-      return api.getWordsCount();
+    async getWordsCount(params = {}) {
+      return api.getWordsCount(params);
     },
     async deleteWordById(id) {
       try {

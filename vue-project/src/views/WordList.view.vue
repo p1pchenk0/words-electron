@@ -3,6 +3,13 @@
     Таблица может не полностью помещаться на экране, есть возможность горизонтальной прокрутки
   </el-alert>
 
+  <el-input
+    :modelValue="search"
+    @update:modelValue="onSearch"
+    placeholder="Поиск слова"
+    class="m-b-sm"
+  />
+
   <el-table
     @sort-change="onSort"
     class-name="list-table m-b-sm"
@@ -15,7 +22,8 @@
     table-layout="auto"
   >
     <template #empty>
-      <Empty style="margin: 20px"/>
+      <div v-if="formattedSearch.length">По заданному запросу ничего не найдено</div>
+      <Empty v-else style="margin: 20px"/>
     </template>
     <el-table-column prop="word" label="Слово" class-name="list-table__word" sortable="custom"/>
     <el-table-column prop="translations" label="Переводы" class-name="list-table__translations">
@@ -94,11 +102,20 @@ const currentPage = ref(1);
 const deleteCandidateId = ref(null);
 const wordBeingEdited = ref(null);
 const isEditDialogOpen = ref(false);
-
-// TODO: implement word search
+const search = ref('');
 
 const tableData = computed(() => {
   return store.words;
+});
+
+function onSearch(input) {
+  currentPage.value = 1;
+
+  search.value = input;
+}
+
+const formattedSearch = computed(() => {
+  return search.value.trim().toLowerCase();
 });
 
 function onPageChange(newPageNumber) {
@@ -177,7 +194,8 @@ function onSort({ prop, order }) {
 const params = computed(() => {
   return {
     ...sortParams.value,
-    page: currentPage.value
+    page: currentPage.value,
+    search: formattedSearch.value,
   }
 })
 

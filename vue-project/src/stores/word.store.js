@@ -50,6 +50,7 @@ export const makeWordStore = ({ wordInteractor, useSettingsStore }) => {
         }
 
         const [maybeError, words] = await wordInteractor.getWords(params);
+        await this.getWordsCount(params);
 
         if (maybeError) {
           this.words = [];
@@ -62,8 +63,8 @@ export const makeWordStore = ({ wordInteractor, useSettingsStore }) => {
       async saveGameResults() {
         return wordInteractor.saveGameResults(this.words);
       },
-      async getWordsCount() {
-        this.totalWordsCount = await wordInteractor.getWordsCount();
+      async getWordsCount(params = {}) {
+        this.totalWordsCount = await wordInteractor.getWordsCount(params);
       },
       async deleteWordById(id) {
         return wordInteractor.deleteWordById(id);

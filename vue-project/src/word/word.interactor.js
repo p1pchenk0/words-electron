@@ -104,6 +104,7 @@ export const makeWordInteractor = ({ wordMapper, wordRepo, shuffle }) => {
         order: params.order === 'ascending' ? 'asc' : 'desc',
         sortBy: params.prop,
         count: params.wordsPerGame,
+        search: params.search,
         wrongCountPriority: params.wrongCountPriority
       };
 
@@ -118,8 +119,12 @@ export const makeWordInteractor = ({ wordMapper, wordRepo, shuffle }) => {
 
       return wordRepo.saveGameResults(formattedWords);
     },
-    async getWordsCount() {
-      return wordRepo.getWordsCount();
+    async getWordsCount(params = {}) {
+      const formattedParams = {
+        search: params.search
+      };
+
+      return wordRepo.getWordsCount(formattedParams);
     },
     async deleteWordById(id) {
       return wordRepo.deleteWordById(id);

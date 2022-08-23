@@ -1,3 +1,5 @@
+import { WRONG_INCREASE_COUNT } from "@/constants";
+
 export const makeWordFactory = (shuffle) => (rawData) => {
   let { _id, word, translations, description, rightWrongDiff } = rawData;
 
@@ -14,7 +16,7 @@ export const makeWordFactory = (shuffle) => (rawData) => {
   }
 
   function increaseWrongCount() {
-    rightWrongDiff -= 10;
+    rightWrongDiff -= WRONG_INCREASE_COUNT;
   }
 
   function getRandomVariant({ translationsOnly } = {}) {

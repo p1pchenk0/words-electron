@@ -6,7 +6,6 @@
   "main": "main.js",
   "scripts": {
     "electron": "electron .",
-    "electron-build": "ng build --prod && electron .",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
