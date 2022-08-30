@@ -13,14 +13,14 @@
   >
     <div class="make-pair__sizer"></div>
     <div
-      v-for="card in words"
+      v-for="card in formattedWords"
       :key="card.id + card.label"
       class="make-pair__card"
       :class="getCardClasses(card)"
       @click="onCardClicked(card)"
     >
       <el-card class="bg-orange">
-        {{ card.label }}
+        <div v-html="card.label" />
         <el-popover
           v-if="isCurrentCardSelected(card)"
           placement="top"
@@ -85,6 +85,10 @@ const isPairInvalid = computed(() => {
   const sameType = ['guess', 'answer'].some(type => selectedCards.value.every(card => card.type === type));
 
   return sameType || ['isWord', 'isTranslation', 'isDescription'].some(key => selectedCards.value.every(card => card[key]));
+});
+
+const formattedWords = computed(() => {
+  return words.value.map(e => ({ ...e, label: e.label.replace('\n', '<div>—</div>') }));
 });
 
 const checkCardSelected = (card) => {
